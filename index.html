@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سامانه ثبت فروش Honor - نهایی</title>
     <style>
+        /* (کدهای CSS اینجا قرار می گیرند، همان کدهای تم درخشان قبلی) */
         /* --- تم درخشان (Glow) و متحرک (Animated) --- */
         body {
             font-family: Tahoma, sans-serif;
@@ -16,28 +17,25 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden; /* جلوگیری از اسکرول به خاطر انیمیشن */
+            overflow: hidden; 
         }
-        /* لایه متحرک برای تلألؤ سبز و قرمز */
         .glow-background {
             position: fixed;
             top: 0;
             left: 0;
             width: 200%;
             height: 200%;
-            /* گرادیان با رنگ‌های درخشان‌تر */
             background: radial-gradient(
                 circle at 20% 80%, 
-                rgba(173, 255, 47, 0.2), /* سبز فسفری */
+                rgba(173, 255, 47, 0.2), 
                 transparent 40%
             ),
             radial-gradient(
                 circle at 80% 20%, 
-                rgba(255, 69, 0, 0.2), /* قرمز نارنجی درخشان */
+                rgba(255, 69, 0, 0.2), 
                 transparent 40%
             );
             background-size: 50% 50%;
-            /* انیمیشن بر اساس یک الگوی متحرک (شبیه‌سازی فیبوناچی) */
             animation: fib-glow 30s infinite alternate cubic-bezier(0.6, 0.05, 0.35, 1);
             z-index: -1;
         }
@@ -47,11 +45,11 @@
                 transform: translate(0, 0) rotate(0deg); 
                 opacity: 0.7;
             }
-            38.2% { /* عدد تقریبی فیبوناچی 0.382 */
+            38.2% { 
                 transform: translate(-10%, 20%) rotate(45deg); 
                 opacity: 0.8;
             }
-            61.8% { /* عدد تقریبی فیبوناچی 0.618 */
+            61.8% { 
                 transform: translate(15%, -10%) rotate(180deg); 
                 opacity: 0.9;
             }
@@ -66,14 +64,14 @@
             background: rgba(40, 40, 40, 0.2); 
             padding: 30px; 
             border-radius: 15px; 
-            box-shadow: 0 0 30px rgba(40, 167, 69, 0.4); /* سایه سبز قوی */
+            box-shadow: 0 0 30px rgba(40, 167, 69, 0.4); 
             border: 1px solid #4a7d52;
             backdrop-filter: blur(8px);
             position: relative;
             z-index: 10;
         }
         h2 { 
-            border-bottom: 2px solid #32cd32; /* سبز لیمویی */
+            border-bottom: 2px solid #32cd32; 
             padding-bottom: 10px; 
             color: #32cd32; 
         }
@@ -85,7 +83,7 @@
             border-radius: 6px; 
             background-color: #1a1a1a; 
             color: #fff;
-            box-shadow: inset 0 0 5px rgba(0, 255, 0, 0.1); /* تلألؤ داخلی سبز */
+            box-shadow: inset 0 0 5px rgba(0, 255, 0, 0.1); 
             transition: box-shadow 0.3s;
         }
         input:focus {
@@ -110,7 +108,7 @@
             background-color: #4d2e2e; 
             color: #ff9999; 
             border: 1px solid #7d4a4a; 
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); /* تلألؤ خطای قرمز */
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); 
         }
         .dashboard-links a { 
             background-color: #1e88e5; 
@@ -131,21 +129,21 @@
         <div class="dashboard-links">
             <a href="WORKER_URL/api/sales/data" target="_blank">مشاهده داده‌ها (JSON)</a>
             <a href="WORKER_URL/api/sales/export" target="_blank">دانلود خروجی Excel (CSV)</a>
-            <p style="margin-top: 15px; color: #aaa;">توجه: برای دسترسی به لینک‌های بالا، مطمئن شوید که **X-Seller-ID** به ابزار توسعه‌دهندگان مرورگر $(\text{Developer Tools})$ اضافه شده است.</p>
+            <p style="margin-top: 15px; color: #aaa;">توجه: برای دسترسی به لینک‌های بالا، باید هدر $\text{X-Seller-ID}$ را به ابزار توسعه‌دهندگان ($\text{Developer Tools}$) اضافه کنید.</p>
         </div>
 
         <hr style="margin: 30px 0;">
 
         <h2>فرم ثبت فروش جدید</h2>
         <form id="salesForm">
-            <label for="sellerId">کد فروشنده (برای تست: $\text{seller-001}$):</label>
-            <input type="text" id="sellerId" name="sellerId" required value="seller-001">
+            <label for="sellerId">کد فروشنده:</label>
+            <input type="text" id="sellerId" name="sellerId" required value="seller-001" placeholder="برای تست: seller-001">
 
             <label for="imei">شماره $\text{IMEI}$:</label>
-            <input type="text" id="imei" name="imei" required maxlength="15">
+            <input type="text" id="imei" name="imei" required maxlength="15" placeholder="شماره 15 رقمی IMEI">
 
-            <label for="phoneModel">مدل گوشی (مثال: $\text{Magic6 Pro}$):</label>
-            <input type="text" id="phoneModel" name="phoneModel" required>
+            <label for="phoneModel">مدل گوشی:</label>
+            <input type="text" id="phoneModel" name="phoneModel" required placeholder="مثال: Magic6 Pro">
 
             <label for="saleDate">تاریخ فروش:</label>
             <input type="date" id="saleDate" name="saleDate" required>
@@ -162,11 +160,8 @@
     </div>
 
     <script>
-        // آدرس PAGES شما، که Worker اکنون از طریق آن مسیریابی می شود
-        // مهم: این آدرس باید فقط آدرس PAGES باشد و اسلش / در انتها نداشته باشد
         const WORKER_URL = "https://honor-sales-app-frontend.pages.dev"; 
         
-        // --- ۱. تنظیم تاریخ پیش‌فرض روی روز جاری ---
         function setTodayDate() {
             const now = new Date();
             const year = now.getFullYear();
@@ -180,16 +175,12 @@
             document.getElementById('saleDate').value = today;
         }
 
-        // --- ۲. جایگزینی آدرس‌ها و رفع مشکل چسبیدن لینک‌ها (GET) ---
         document.querySelectorAll('.dashboard-links a').forEach(a => {
-            // جایگزینی WORKER_URL در لینک‌های HTML با آدرس PAGES
             a.href = a.href.replace('WORKER_URL', WORKER_URL);
         });
 
-        // اجرای تابع تنظیم تاریخ هنگام بارگذاری صفحه
         setTodayDate();
 
-        // --- ۳. منطق ارسال فرم (POST) ---
         document.getElementById('salesForm').addEventListener('submit', async function(event) {
             event.preventDefault();
             const form = event.target;
@@ -199,18 +190,21 @@
 
             const sellerId = form.sellerId.value;
             const data = {
-                // ... (بقیه داده ها)
+                imei: form.imei.value,
+                phone_model: form.phoneModel.value,
+                sale_date: form.saleDate.value,
+                city: form.city.value,
+                phone_number: form.phoneNumber.value
             };
 
             try {
-                // آدرس نهایی POST: https://honor-sales-app-frontend.pages.dev/api/sales/register
                 const apiUrl = `${WORKER_URL}/api/sales/register`; 
                 
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-Seller-ID': sellerId // کلید احراز هویت
+                        'X-Seller-ID': sellerId
                     },
                     body: JSON.stringify(data)
                 });
@@ -225,12 +219,10 @@
                     setTodayDate();
                 } else {
                     messageDiv.classList.add('error');
-                    // این خطاها معمولاً به دلیل Worker Route نادرست یا X-Seller-ID اشتباه رخ می‌دهند
-                    messageDiv.innerHTML = `❌ خطا (${response.status}): ${result.message || 'مشکل در ارتباط با سرور. مطمئن شوید Worker فعال و مسیر API درست است.'}`;
+                    messageDiv.innerHTML = `❌ خطا (${response.status}): ${result.message || 'مشکل در ارتباط با سرور.'}`;
                 }
             } catch (error) {
                 messageDiv.classList.add('error');
-                // خطای شبکه (که در تصویر شما دیده شد)
                 messageDiv.innerHTML = `❌ خطای شبکه: ارتباط با Worker قطع است یا CORS مسدود شده است. لطفاً تنظیمات Pages Routes را بررسی کنید.`;
             } finally {
                 messageDiv.style.display = 'block';
