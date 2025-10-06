@@ -1,10 +1,5 @@
-// فایل: _routes.json
 {
   "version": 1,
-  "include": [
-    "/api/*"
-  ],
-  "exclude": [
-    "/build/*"
-  ]
+  "include": ["/api/*"],
+  "exclude": ["/build/*"]
 }
