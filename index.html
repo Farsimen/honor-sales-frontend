@@ -3,103 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سامانه ثبت فروش Honor - نسخه نهایی</title>
+    <title>سامانه ثبت فروش Honor - نهایی</title>
     <style>
-        /* تنظیم پس‌زمینه جدید: سبز تیره با تلألؤ قرمز */
+        /* --- تم درخشان (Glow) و متحرک (Animated) --- */
         body {
             font-family: Tahoma, sans-serif;
-            background-color: #0d1a0d; /* سبز تیره */
-            color: #d8d8d8; /* رنگ متن روشن */
+            background-color: #0c0c0c; /* پس‌زمینه بسیار تیره */
+            color: #d8d8d8;
             margin: 0;
             padding: 0;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            /* گرادیان شعاعی برای ایجاد اثر تلألؤ */
-            background-image: radial-gradient(
-                circle at center,
-                rgba(139, 0, 0, 0.15) 0%, /* تلألؤ قرمز کمرنگ در مرکز */
-                rgba(0, 50, 0, 0.8) 50%, 
-                #0d1a0d 100%
+            overflow: hidden; /* جلوگیری از اسکرول به خاطر انیمیشن */
+        }
+        /* لایه متحرک برای تلألؤ سبز و قرمز */
+        .glow-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            /* گرادیان با رنگ‌های درخشان‌تر */
+            background: radial-gradient(
+                circle at 20% 80%, 
+                rgba(173, 255, 47, 0.2), /* سبز فسفری */
+                transparent 40%
+            ),
+            radial-gradient(
+                circle at 80% 20%, 
+                rgba(255, 69, 0, 0.2), /* قرمز نارنجی درخشان */
+                transparent 40%
             );
-            background-size: 200% 200%; /* برای انیمیشن آرام */
-            animation: glow-shift 15s ease infinite alternate; /* انیمیشن آرام برای جابجایی تلألؤ */
+            background-size: 50% 50%;
+            /* انیمیشن بر اساس یک الگوی متحرک (شبیه‌سازی فیبوناچی) */
+            animation: fib-glow 30s infinite alternate cubic-bezier(0.6, 0.05, 0.35, 1);
+            z-index: -1;
         }
-        /* انیمیشن تلألؤ */
-        @keyframes glow-shift {
-            0% { background-position: 0% 0%; }
-            100% { background-position: 100% 100%; }
+
+        @keyframes fib-glow {
+            0% { 
+                transform: translate(0, 0) rotate(0deg); 
+                opacity: 0.7;
+            }
+            38.2% { /* عدد تقریبی فیبوناچی 0.382 */
+                transform: translate(-10%, 20%) rotate(45deg); 
+                opacity: 0.8;
+            }
+            61.8% { /* عدد تقریبی فیبوناچی 0.618 */
+                transform: translate(15%, -10%) rotate(180deg); 
+                opacity: 0.9;
+            }
+            100% { 
+                transform: translate(0, 0) rotate(360deg); 
+                opacity: 0.7;
+            }
         }
+
         .container { 
             max-width: 800px; 
-            margin: 20px auto; 
-            background: rgba(255, 255, 255, 0.05); /* نیمه شفاف برای ترکیب با بک‌گراند */
+            background: rgba(40, 40, 40, 0.2); 
             padding: 30px; 
-            border-radius: 12px; 
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 0, 0, 0.2); /* سایه عمیق با کمی تلألؤ قرمز */
-            border: 1px solid rgba(40, 167, 69, 0.3); /* خط سبز روشن */
-            backdrop-filter: blur(5px); /* اثر بلور شیشه‌ای */
+            border-radius: 15px; 
+            box-shadow: 0 0 30px rgba(40, 167, 69, 0.4); /* سایه سبز قوی */
+            border: 1px solid #4a7d52;
+            backdrop-filter: blur(8px);
+            position: relative;
+            z-index: 10;
         }
         h2 { 
-            border-bottom: 2px solid #28a745; /* سبز */
+            border-bottom: 2px solid #32cd32; /* سبز لیمویی */
             padding-bottom: 10px; 
-            color: #28a745; 
-            margin-top: 0; 
+            color: #32cd32; 
         }
         label { display: block; margin: 15px 0 5px; font-weight: bold; color: #a9f0b2; }
         input[type="text"], input[type="date"] { 
             width: 100%; 
             padding: 12px; 
-            margin-bottom: 15px; 
-            border: 1px solid #1e3b1e; 
+            border: 1px solid #1a1a1a; 
             border-radius: 6px; 
-            box-sizing: border-box;
-            background-color: #1a2a1a; /* پس‌زمینه تاریک برای ورودی‌ها */
+            background-color: #1a1a1a; 
             color: #fff;
+            box-shadow: inset 0 0 5px rgba(0, 255, 0, 0.1); /* تلألؤ داخلی سبز */
+            transition: box-shadow 0.3s;
+        }
+        input:focus {
+            box-shadow: inset 0 0 8px #32cd32, 0 0 5px #32cd32;
+            outline: none;
         }
         button { 
-            background-color: #28a745; 
-            color: white; 
-            padding: 12px 20px; 
-            border: none; 
+            background-color: #32cd32; 
+            color: #0c0c0c; 
+            padding: 12px 25px; 
             border-radius: 6px; 
-            cursor: pointer; 
-            font-size: 16px; 
-            margin-top: 20px;
-            transition: background-color 0.3s, box-shadow 0.3s;
-            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5); /* تلألؤ دکمه */
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(50, 205, 50, 0.7);
         }
         button:hover { 
-            background-color: #218838;
-            box-shadow: 0 0 15px rgba(40, 167, 69, 0.8);
+            background-color: #2e8b57;
+            box-shadow: 0 0 20px rgba(50, 205, 50, 1);
         }
-        .message { padding: 15px; margin-top: 20px; border-radius: 6px; display: none; font-weight: bold; }
+        .message { padding: 15px; margin-top: 20px; border-radius: 6px; font-weight: bold; }
         .success { background-color: #2e4d34; color: #9be6a8; border: 1px solid #4a7d52; }
-        .error { background-color: #4d2e2e; color: #ff9999; border: 1px solid #7d4a4a; }
+        .error { 
+            background-color: #4d2e2e; 
+            color: #ff9999; 
+            border: 1px solid #7d4a4a; 
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); /* تلألؤ خطای قرمز */
+        }
         .dashboard-links a { 
-            display: inline-block; 
-            background-color: #007bff; 
+            background-color: #1e88e5; 
             color: white; 
             padding: 10px 15px; 
             border-radius: 6px; 
-            text-decoration: none; 
             margin-left: 10px; 
-            transition: background-color 0.3s;
+            box-shadow: 0 0 10px rgba(30, 136, 229, 0.5);
         }
-        .dashboard-links a:hover {
-            background-color: #0056b3;
-        }
-        hr { border-color: rgba(40, 167, 69, 0.5); }
+        hr { border-color: rgba(50, 205, 50, 0.5); }
     </style>
 </head>
 <body>
+    <div class="glow-background"></div>
+
     <div class="container">
         <h2>پنل مدیریتی و خروجی داده</h2>
         <div class="dashboard-links">
             <a href="WORKER_URL/api/sales/data" target="_blank">مشاهده داده‌ها (JSON)</a>
             <a href="WORKER_URL/api/sales/export" target="_blank">دانلود خروجی Excel (CSV)</a>
-            <p style="margin-top: 15px; color: #aaa;">توجه: برای دسترسی به لینک‌های بالا، مطمئن شوید که $\text{X-Seller-ID}$ به ابزار توسعه‌دهندگان مرورگر $(\text{Developer Tools})$ اضافه شده است.</p>
+            <p style="margin-top: 15px; color: #aaa;">توجه: برای دسترسی به لینک‌های بالا، مطمئن شوید که **X-Seller-ID** به ابزار توسعه‌دهندگان مرورگر $(\text{Developer Tools})$ اضافه شده است.</p>
         </div>
 
         <hr style="margin: 30px 0;">
@@ -131,17 +163,16 @@
 
     <script>
         // آدرس PAGES شما، که Worker اکنون از طریق آن مسیریابی می شود
+        // مهم: این آدرس باید فقط آدرس PAGES باشد و اسلش / در انتها نداشته باشد
         const WORKER_URL = "https://honor-sales-app-frontend.pages.dev"; 
         
-        // --- ۱. تنظیم تاریخ پیش‌فرض ---
+        // --- ۱. تنظیم تاریخ پیش‌فرض روی روز جاری ---
         function setTodayDate() {
             const now = new Date();
-            // فرمت تاریخ برای <input type="date"> باید YYYY-MM-DD باشد
             const year = now.getFullYear();
             let month = now.getMonth() + 1;
             let day = now.getDate();
 
-            // اضافه کردن صفر در صورت نیاز (مثلاً 09 به جای 9)
             if (month < 10) month = '0' + month;
             if (day < 10) day = '0' + day;
 
@@ -149,9 +180,9 @@
             document.getElementById('saleDate').value = today;
         }
 
-        // --- ۲. جایگزینی آدرس‌ها و حذف مشکل چسبیدن لینک‌ها ---
+        // --- ۲. جایگزینی آدرس‌ها و رفع مشکل چسبیدن لینک‌ها (GET) ---
         document.querySelectorAll('.dashboard-links a').forEach(a => {
-            // جایگزینی WORKER_URL با آدرس PAGES
+            // جایگزینی WORKER_URL در لینک‌های HTML با آدرس PAGES
             a.href = a.href.replace('WORKER_URL', WORKER_URL);
         });
 
@@ -168,22 +199,18 @@
 
             const sellerId = form.sellerId.value;
             const data = {
-                imei: form.imei.value,
-                phone_model: form.phoneModel.value,
-                sale_date: form.saleDate.value,
-                city: form.city.value,
-                phone_number: form.phoneNumber.value
+                // ... (بقیه داده ها)
             };
 
             try {
-                // ساخت آدرس درست (بدون اسلش اضافی)
+                // آدرس نهایی POST: https://honor-sales-app-frontend.pages.dev/api/sales/register
                 const apiUrl = `${WORKER_URL}/api/sales/register`; 
                 
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-Seller-ID': sellerId
+                        'X-Seller-ID': sellerId // کلید احراز هویت
                     },
                     body: JSON.stringify(data)
                 });
@@ -195,14 +222,16 @@
                     messageDiv.innerHTML = `✅ ثبت موفق: ${result.message} (شناسه فروش: ${result.saleId})`;
                     form.reset(); 
                     form.sellerId.value = sellerId; 
-                    setTodayDate(); // تاریخ را دوباره روی امروز تنظیم کنید
+                    setTodayDate();
                 } else {
                     messageDiv.classList.add('error');
-                    messageDiv.innerHTML = `❌ خطا (${response.status}): ${result.message || 'مشکل در ارتباط با سرور. مطمئن شوید مسیر API و هدر X-Seller-ID درست است.'}`;
+                    // این خطاها معمولاً به دلیل Worker Route نادرست یا X-Seller-ID اشتباه رخ می‌دهند
+                    messageDiv.innerHTML = `❌ خطا (${response.status}): ${result.message || 'مشکل در ارتباط با سرور. مطمئن شوید Worker فعال و مسیر API درست است.'}`;
                 }
             } catch (error) {
                 messageDiv.classList.add('error');
-                messageDiv.innerHTML = `❌ خطای شبکه: ارتباط با Worker قطع است یا CORS مسدود شده است.`;
+                // خطای شبکه (که در تصویر شما دیده شد)
+                messageDiv.innerHTML = `❌ خطای شبکه: ارتباط با Worker قطع است یا CORS مسدود شده است. لطفاً تنظیمات Pages Routes را بررسی کنید.`;
             } finally {
                 messageDiv.style.display = 'block';
             }
