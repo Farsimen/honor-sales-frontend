@@ -62,7 +62,30 @@
 
     <script>
         // آدرس WORKER_URL حذف شد و از آدرس نسبی استفاده می‌کنیم
-        
+       // ... (در بخش <script> در index.html)
+
+// جایگزین کنید: از آدرس کامل Workers.dev استفاده کنید
+// آدرس زیردامنه Worker خودتان را جایگزین کنید
+const WORKER_BASE_URL = "https://honor-sales-worker.m-pazhoohesh.workers.dev"; // آدرس Worker شما
+
+// ... (در داخل تابع addEventListener)
+// ... (به جای استفاده از /api/sales/register)
+            
+            try {
+                // آدرس نهایی POST
+                // از Base URL استفاده کرده و مسیر کامل را اضافه می‌کنیم
+                const apiUrl = `${WORKER_BASE_URL}/api/sales/register`; 
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Seller-ID': sellerId
+                    },
+                    body: JSON.stringify(data)
+                });
+// ... (ادامه کد)
+                
         function setTodayDate() {
             const now = new Date();
             const today = now.toISOString().split('T')[0];
