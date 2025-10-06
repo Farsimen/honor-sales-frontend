@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سامانه ثبت فروش Honor - نهایی</title>
     <style>
-        /* (کدهای CSS اینجا قرار می گیرند، همان کدهای تم درخشان قبلی) */
-        /* --- تم درخشان (Glow) و متحرک (Animated) --- */
+        /* --- تم نهایی (Minimal Glow) --- */
         body {
             font-family: Tahoma, sans-serif;
             background-color: #0c0c0c; /* پس‌زمینه بسیار تیره */
@@ -19,106 +18,82 @@
             align-items: center;
             overflow: hidden; 
         }
+        /* جلوه‌های رنگی درخشان‌تر (الگوی فیبوناچی حذف شد تا تمرکز بر UX باشد) */
         .glow-background {
             position: fixed;
             top: 0;
             left: 0;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(
-                circle at 20% 80%, 
-                rgba(173, 255, 47, 0.2), 
-                transparent 40%
-            ),
-            radial-gradient(
-                circle at 80% 20%, 
-                rgba(255, 69, 0, 0.2), 
-                transparent 40%
-            );
-            background-size: 50% 50%;
-            animation: fib-glow 30s infinite alternate cubic-bezier(0.6, 0.05, 0.35, 1);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 90%, rgba(173, 255, 47, 0.15), transparent 60%),
+                        radial-gradient(circle at 90% 10%, rgba(50, 205, 50, 0.15), transparent 60%);
             z-index: -1;
-        }
-
-        @keyframes fib-glow {
-            0% { 
-                transform: translate(0, 0) rotate(0deg); 
-                opacity: 0.7;
-            }
-            38.2% { 
-                transform: translate(-10%, 20%) rotate(45deg); 
-                opacity: 0.8;
-            }
-            61.8% { 
-                transform: translate(15%, -10%) rotate(180deg); 
-                opacity: 0.9;
-            }
-            100% { 
-                transform: translate(0, 0) rotate(360deg); 
-                opacity: 0.7;
-            }
+            transition: opacity 0.5s;
         }
 
         .container { 
-            max-width: 800px; 
-            background: rgba(40, 40, 40, 0.2); 
+            max-width: 700px; 
+            background: rgba(40, 40, 40, 0.3); /* پس‌زمینه نیمه‌شفاف */
             padding: 30px; 
-            border-radius: 15px; 
-            box-shadow: 0 0 30px rgba(40, 167, 69, 0.4); 
+            border-radius: 12px; 
+            box-shadow: 0 0 25px rgba(50, 205, 50, 0.3); /* سایه سبز ملایم */
             border: 1px solid #4a7d52;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(5px);
             position: relative;
             z-index: 10;
         }
         h2 { 
             border-bottom: 2px solid #32cd32; 
-            padding-bottom: 10px; 
+            padding-bottom: 8px; 
             color: #32cd32; 
+            margin-bottom: 20px;
         }
-        label { display: block; margin: 15px 0 5px; font-weight: bold; color: #a9f0b2; }
+        label { display: block; margin: 12px 0 4px; font-weight: 600; color: #a9f0b2; }
         input[type="text"], input[type="date"] { 
             width: 100%; 
-            padding: 12px; 
+            padding: 10px; 
             border: 1px solid #1a1a1a; 
-            border-radius: 6px; 
+            border-radius: 4px; 
             background-color: #1a1a1a; 
             color: #fff;
-            box-shadow: inset 0 0 5px rgba(0, 255, 0, 0.1); 
-            transition: box-shadow 0.3s;
         }
         input:focus {
-            box-shadow: inset 0 0 8px #32cd32, 0 0 5px #32cd32;
+            box-shadow: 0 0 0 2px #32cd32;
             outline: none;
         }
         button { 
             background-color: #32cd32; 
             color: #0c0c0c; 
-            padding: 12px 25px; 
-            border-radius: 6px; 
+            padding: 10px 20px; 
+            border-radius: 4px; 
             font-weight: bold;
-            box-shadow: 0 0 15px rgba(50, 205, 50, 0.7);
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(50, 205, 50, 0.5);
+            transition: background-color 0.2s, box-shadow 0.2s;
+            cursor: pointer;
         }
         button:hover { 
             background-color: #2e8b57;
-            box-shadow: 0 0 20px rgba(50, 205, 50, 1);
+            box-shadow: 0 0 15px rgba(50, 205, 50, 0.8);
         }
-        .message { padding: 15px; margin-top: 20px; border-radius: 6px; font-weight: bold; }
+        .message { padding: 12px; margin-top: 15px; border-radius: 4px; font-weight: bold; }
         .success { background-color: #2e4d34; color: #9be6a8; border: 1px solid #4a7d52; }
         .error { 
             background-color: #4d2e2e; 
             color: #ff9999; 
             border: 1px solid #7d4a4a; 
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); 
         }
+        .dashboard-links { margin-bottom: 20px; }
         .dashboard-links a { 
             background-color: #1e88e5; 
             color: white; 
-            padding: 10px 15px; 
-            border-radius: 6px; 
-            margin-left: 10px; 
-            box-shadow: 0 0 10px rgba(30, 136, 229, 0.5);
+            padding: 8px 12px; 
+            border-radius: 4px; 
+            margin-left: 8px; 
+            text-decoration: none;
+            display: inline-block;
         }
-        hr { border-color: rgba(50, 205, 50, 0.5); }
+        hr { border-color: rgba(50, 205, 50, 0.3); margin: 25px 0; }
     </style>
 </head>
 <body>
@@ -127,20 +102,20 @@
     <div class="container">
         <h2>پنل مدیریتی و خروجی داده</h2>
         <div class="dashboard-links">
-            <a href="WORKER_URL/api/sales/data" target="_blank">مشاهده داده‌ها (JSON)</a>
-            <a href="WORKER_URL/api/sales/export" target="_blank">دانلود خروجی Excel (CSV)</a>
-            <p style="margin-top: 15px; color: #aaa;">توجه: برای دسترسی به لینک‌های بالا، باید هدر $\text{X-Seller-ID}$ را به ابزار توسعه‌دهندگان ($\text{Developer Tools}$) اضافه کنید.</p>
+            <a id="dataLink" href="/api/sales/data" target="_blank">مشاهده داده‌ها (JSON)</a>
+            <a id="exportLink" href="/api/sales/export" target="_blank">دانلود خروجی Excel (CSV)</a>
+            <p style="margin-top: 15px; color: #aaa; font-size: 0.9em;">توجه: برای دسترسی به لینک‌های بالا، باید هدر $\text{X-Seller-ID}$ را به ابزار توسعه‌دهندگان اضافه کنید.</p>
         </div>
 
-        <hr style="margin: 30px 0;">
+        <hr>
 
         <h2>فرم ثبت فروش جدید</h2>
         <form id="salesForm">
             <label for="sellerId">کد فروشنده:</label>
-            <input type="text" id="sellerId" name="sellerId" required value="seller-001" placeholder="برای تست: seller-001">
+            <input type="text" id="sellerId" name="sellerId" required value="seller-001" placeholder="کد فروشنده شما">
 
             <label for="imei">شماره $\text{IMEI}$:</label>
-            <input type="text" id="imei" name="imei" required maxlength="15" placeholder="شماره 15 رقمی IMEI">
+            <input type="text" id="imei" name="imei" required maxlength="15" placeholder="15 رقم شماره IMEI">
 
             <label for="phoneModel">مدل گوشی:</label>
             <input type="text" id="phoneModel" name="phoneModel" required placeholder="مثال: Magic6 Pro">
@@ -155,31 +130,23 @@
             <input type="text" id="phoneNumber" name="phoneNumber">
 
             <button type="submit" id="submitButton">ثبت فروش</button>
-            <div id="responseMessage" class="message"></div>
+            <div id="responseMessage" class="message" style="display: none;"></div>
         </form>
     </div>
 
     <script>
+        // در این روش (Pages Functions)، WORKER_URL همان آدرس Pages است
         const WORKER_URL = "https://honor-sales-app-frontend.pages.dev"; 
         
         function setTodayDate() {
             const now = new Date();
-            const year = now.getFullYear();
-            let month = now.getMonth() + 1;
-            let day = now.getDate();
-
-            if (month < 10) month = '0' + month;
-            if (day < 10) day = '0' + day;
-
-            const today = `${year}-${month}-${day}`;
+            const today = now.toISOString().split('T')[0];
             document.getElementById('saleDate').value = today;
         }
-
-        document.querySelectorAll('.dashboard-links a').forEach(a => {
-            a.href = a.href.replace('WORKER_URL', WORKER_URL);
-        });
-
         setTodayDate();
+
+        // نیازی به جایگزینی آدرس نیست، چون از مسیر نسبی (مانند /api/...) استفاده می‌کنیم 
+        // و Pages Functions خودش مسیر را به Worker هدایت می‌کند.
 
         document.getElementById('salesForm').addEventListener('submit', async function(event) {
             event.preventDefault();
@@ -198,6 +165,7 @@
             };
 
             try {
+                // آدرس نهایی POST: https://honor-sales-app-frontend.pages.dev/api/sales/register
                 const apiUrl = `${WORKER_URL}/api/sales/register`; 
                 
                 const response = await fetch(apiUrl, {
@@ -213,17 +181,17 @@
 
                 if (response.ok) {
                     messageDiv.classList.add('success');
-                    messageDiv.innerHTML = `✅ ثبت موفق: ${result.message} (شناسه فروش: ${result.saleId})`;
+                    messageDiv.innerHTML = `✅ ثبت موفق: ${result.message} (شناسه فروش: ${result.saleId || 'N/A'})`;
                     form.reset(); 
                     form.sellerId.value = sellerId; 
                     setTodayDate();
                 } else {
                     messageDiv.classList.add('error');
-                    messageDiv.innerHTML = `❌ خطا (${response.status}): ${result.message || 'مشکل در ارتباط با سرور.'}`;
+                    messageDiv.innerHTML = `❌ خطا (${response.status}): ${result.message || 'مشکل در ارتباط با سرور. Worker مسیر را پیدا نکرد.'}`;
                 }
             } catch (error) {
                 messageDiv.classList.add('error');
-                messageDiv.innerHTML = `❌ خطای شبکه: ارتباط با Worker قطع است یا CORS مسدود شده است. لطفاً تنظیمات Pages Routes را بررسی کنید.`;
+                messageDiv.innerHTML = `❌ خطای شبکه: ارتباط با Worker قطع است. لطفاً تنظیمات Pages Routes را بررسی کنید. (${error.message})`;
             } finally {
                 messageDiv.style.display = 'block';
             }
