@@ -1,127 +1,252 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سامانه ثبت فروش Honor</title>
-    <style>
-        /* (کدهای CSS نهایی Minimal Glow) */
-        body { font-family: Tahoma, sans-serif; background-color: #0c0c0c; color: #d8d8d8; margin: 0; padding: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        .glow-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 10% 90%, rgba(173, 255, 47, 0.15), transparent 60%), radial-gradient(circle at 90% 10%, rgba(50, 205, 50, 0.15), transparent 60%); z-index: -1; }
-        .container { max-width: 700px; background: rgba(40, 40, 40, 0.3); padding: 30px; border-radius: 12px; box-shadow: 0 0 25px rgba(50, 205, 50, 0.3); border: 1px solid #4a7d52; backdrop-filter: blur(5px); position: relative; z-index: 10; }
-        h2 { border-bottom: 2px solid #32cd32; padding-bottom: 8px; color: #32cd32; margin-bottom: 20px; }
-        label { display: block; margin: 12px 0 4px; font-weight: 600; color: #a9f0b2; }
-        input[type="text"], input[type="date"] { width: 100%; padding: 10px; border: 1px solid #1a1a1a; border-radius: 4px; background-color: #1a1a1a; color: #fff; }
-        input:focus { box-shadow: 0 0 0 2px #32cd32; outline: none; }
-        button { background-color: #32cd32; color: #0c0c0c; padding: 10px 20px; border-radius: 4px; font-weight: bold; margin-top: 20px; cursor: pointer; }
-        button:hover { background-color: #2e8b57; box-shadow: 0 0 15px rgba(50, 205, 50, 0.8); }
-        .message { padding: 12px; margin-top: 15px; border-radius: 4px; font-weight: bold; }
-        .success { background-color: #2e4d34; color: #9be6a8; border: 1px solid #4a7d52; }
-        .error { background-color: #4d2e2e; color: #ff9999; border: 1px solid #7d4a4a; }
-        .dashboard-links a { background-color: #1e88e5; color: white; padding: 8px 12px; border-radius: 4px; margin-left: 8px; text-decoration: none; display: inline-block; }
-        hr { border-color: rgba(50, 205, 50, 0.3); margin: 25px 0; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سامانه ثبت فروش Honor</title>
+    <style>
+        /* (کدهای CSS نهایی Minimal Glow) */
+        body { font-family: Tahoma, sans-serif; background-color: #0c0c0c; color: #d8d8d8; margin: 0; padding: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        .glow-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 10% 90%, rgba(173, 255, 47, 0.15), transparent 60%), radial-gradient(circle at 90% 10%, rgba(50, 205, 50, 0.15), transparent 60%); z-index: -1; }
+        .container { max-width: 700px; background: rgba(40, 40, 40, 0.3); padding: 30px; border-radius: 12px; box-shadow: 0 0 25px rgba(50, 205, 50, 0.3); border: 1px solid #4a7d52; backdrop-filter: blur(5px); position: relative; z-index: 10; }
+        h2 { border-bottom: 2px solid #32cd32; padding-bottom: 8px; color: #32cd32; margin-bottom: 20px; }
+        label { display: block; margin: 12px 0 4px; font-weight: 600; color: #a9f0b2; }
+        input[type="text"], input[type="date"] { width: 100%; padding: 10px; border: 1px solid #1a1a1a; border-radius: 4px; background-color: #1a1a1a; color: #fff; }
+        input:focus { box-shadow: 0 0 0 2px #32cd32; outline: none; }
+        button { background-color: #32cd32; color: #0c0c0c; padding: 10px 20px; border-radius: 4px; font-weight: bold; margin-top: 20px; cursor: pointer; border: none; }
+        button:hover { background-color: #2e8b57; box-shadow: 0 0 15px rgba(50, 205, 50, 0.8); }
+        button:disabled { background-color: #666; cursor: not-allowed; box-shadow: none; }
+        .message { padding: 12px; margin-top: 15px; border-radius: 4px; font-weight: bold; }
+        .success { background-color: #2e4d34; color: #9be6a8; border: 1px solid #4a7d52; }
+        .error { background-color: #4d2e2e; color: #ff9999; border: 1px solid #7d4a4a; }
+        .warning { background-color: #4d4d2e; color: #fff; border: 1px solid #7d7d4a; }
+        .dashboard-links a { background-color: #1e88e5; color: white; padding: 8px 12px; border-radius: 4px; margin-left: 8px; text-decoration: none; display: inline-block; margin-bottom: 5px; }
+        .dashboard-links a:hover { background-color: #1565c0; }
+        hr { border-color: rgba(50, 205, 50, 0.3); margin: 25px 0; }
+        .loading { color: #32cd32; }
+        .worker-status { padding: 8px; margin-bottom: 15px; border-radius: 4px; font-size: 0.9em; }
+        .status-online { background-color: #2e4d34; color: #9be6a8; border: 1px solid #4a7d52; }
+        .status-offline { background-color: #4d2e2e; color: #ff9999; border: 1px solid #7d4a4a; }
+    </style>
 </head>
 <body>
-    <div class="glow-background"></div>
+    <div class="glow-background"></div>
 
-    <div class="container">
-        <h2>پنل مدیریتی و خروجی داده</h2>
-        <div class="dashboard-links">
-                        <a href="/api/sales/data" target="_blank">مشاهده داده‌ها (JSON)</a>
-            <a href="/api/sales/export" target="_blank">دانلود خروجی Excel (CSV)</a>
-            <p style="margin-top: 15px; color: #aaa; font-size: 0.9em;">توجه: برای دسترسی به لینک‌های بالا، باید هدر $\text{X-Seller-ID}$ را به ابزار توسعه‌دهندگان اضافه کنید.</p>
-        </div>
+    <div class="container">
+        <div id="workerStatus" class="worker-status">
+            <span class="loading">در حال بررسی وضعیت Worker...</span>
+        </div>
 
-        <hr>
+        <h2>پنل مدیریتی و خروجی داده</h2>
+        <div class="dashboard-links">
+            <a href="#" id="viewDataBtn">مشاهده داده‌ها (JSON)</a>
+            <a href="#" id="exportDataBtn">دانلود خروجی Excel (CSV)</a>
+            <a href="https://honor-sales-worker.m-pazhooohesh.workers.dev/" target="_blank">تست Worker API</a>
+        </div>
 
-        <h2>فرم ثبت فروش جدید</h2>
-        <form id="salesForm">
-            <label for="sellerId">کد فروشنده:</label>
-            <input type="text" id="sellerId" name="sellerId" required value="seller-001" placeholder="کد فروشنده شما">
+        <hr>
 
-            <label for="imei">شماره $\text{IMEI}$:</label>
-            <input type="text" id="imei" name="imei" required maxlength="15" placeholder="15 رقم شماره IMEI">
+        <h2>فرم ثبت فروش جدید</h2>
+        <form id="salesForm">
+            <label for="sellerId">کد فروشنده:</label>
+            <input type="text" id="sellerId" name="sellerId" required value="seller-001" placeholder="کد فروشنده شما">
 
-            <label for="phoneModel">مدل گوشی:</label>
-            <input type="text" id="phoneModel" name="phoneModel" required placeholder="مثال: Magic6 Pro">
+            <label for="imei">شماره IMEI:</label>
+            <input type="text" id="imei" name="imei" required maxlength="15" minlength="15" placeholder="15 رقم شماره IMEI">
 
-            <label for="saleDate">تاریخ فروش:</label>
-            <input type="date" id="saleDate" name="saleDate" required>
-            
-            <label for="city">شهر:</label>
-            <input type="text" id="city" name="city">
+            <label for="phoneModel">مدل گوشی:</label>
+            <input type="text" id="phoneModel" name="phoneModel" required placeholder="مثال: Magic6 Pro">
 
-            <label for="phoneNumber">شماره تماس مشتری:</label>
-            <input type="text" id="phoneNumber" name="phoneNumber">
+            <label for="saleDate">تاریخ فروش:</label>
+            <input type="date" id="saleDate" name="saleDate" required>
+            
+            <label for="city">شهر:</label>
+            <input type="text" id="city" name="city" placeholder="اختیاری">
 
-            <button type="submit" id="submitButton">ثبت فروش</button>
-            <div id="responseMessage" class="message" style="display: none;"></div>
-        </form>
-    </div>
+            <label for="phoneNumber">شماره تماس مشتری:</label>
+            <input type="text" id="phoneNumber" name="phoneNumber" placeholder="اختیاری">
 
-    <script>
-        // تابع تنظیم تاریخ روز
-        function setTodayDate() {
-            const now = new Date();
-            // فرمت yyyy-mm-dd
-            const today = now.toISOString().split('T')[0]; 
-            document.getElementById('saleDate').value = today;
-        }
-        setTodayDate();
+            <button type="submit" id="submitButton">ثبت فروش</button>
+            <div id="responseMessage" class="message" style="display: none;"></div>
+        </form>
+    </div>
 
-        document.getElementById('salesForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const form = event.target;
-            const messageDiv = document.getElementById('responseMessage');
-            messageDiv.style.display = 'none';
-            messageDiv.className = 'message';
+    <script>
+        // آدرس Worker API
+        const WORKER_BASE_URL = 'https://honor-sales-worker.m-pazhooohesh.workers.dev';
+        
+        // تابع تنظیم تاریخ روز
+        function setTodayDate() {
+            const now = new Date();
+            const today = now.toISOString().split('T')[0]; 
+            document.getElementById('saleDate').value = today;
+        }
+        
+        // تابع بررسی وضعیت Worker
+        async function checkWorkerStatus() {
+            const statusDiv = document.getElementById('workerStatus');
+            try {
+                const response = await fetch(`${WORKER_BASE_URL}/`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    statusDiv.className = 'worker-status status-online';
+                    statusDiv.innerHTML = `✅ Worker فعال - ${data.message || 'API Ready'}`;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                statusDiv.className = 'worker-status status-offline';
+                statusDiv.innerHTML = `❌ Worker غیرفعال - ${error.message}`;
+            }
+        }
 
-            const sellerId = form.sellerId.value;
-            const data = {
-                imei: form.imei.value,
-                phone_model: form.phoneModel.value,
-                sale_date: form.saleDate.value,
-                city: form.city.value,
-                phone_number: form.phoneNumber.value
-            };
+        // تابع مشاهده داده‌ها
+        async function viewData() {
+            try {
+                const response = await fetch(`${WORKER_BASE_URL}/api/sales/data`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const newWindow = window.open();
+                    newWindow.document.write(`<pre style="font-family: monospace; padding: 20px; background: #f5f5f5; direction: ltr;">${JSON.stringify(data, null, 2)}</pre>`);
+                } else {
+                    alert('خطا در بازیابی داده‌ها');
+                }
+            } catch (error) {
+                alert('خطا در ارتباط با سرور');
+            }
+        }
 
-            try {
-                // تنها و تنها آدرس نسبی استفاده می‌شود.
-                // Pages Routes و Service Binding این درخواست را به Worker هدایت می‌کنند.
-                const apiUrl = "/api/sales/register";
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Seller-ID': sellerId
-                    },
-                    body: JSON.stringify(data)
-                });
+        // تابع دانلود CSV
+        async function exportData() {
+            try {
+                const response = await fetch(`${WORKER_BASE_URL}/api/sales/export`);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `honor_sales_${new Date().toISOString().split('T')[0]}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    alert('خطا در دانلود فایل');
+                }
+            } catch (error) {
+                alert('خطا در ارتباط با سرور');
+            }
+        }
 
-                const result = await response.json();
+        // راه‌اندازی اولیه
+        document.addEventListener('DOMContentLoaded', function() {
+            setTodayDate();
+            checkWorkerStatus();
 
-                if (response.ok) {
-                    messageDiv.classList.add('success');
-                    messageDiv.innerHTML = `✅ ثبت موفق: ${result.message} (شناسه فروش: ${result.saleId || 'N/A'})`;
-                    // پاک کردن فیلدها و حفظ کد فروشنده
-                    form.reset(); 
-                    form.sellerId.value = sellerId; 
-                    setTodayDate();
-                } else {
-                    messageDiv.classList.add('error');
-                    // نمایش خطای دقیق‌تر از Worker
-                    messageDiv.innerHTML = `❌ خطا (${response.status}): ${result.message || 'مشکل در ارتباط با سرور یا Worker مسیر را پیدا نکرد.'}`;
-                }
-            } catch (error) {
-                messageDiv.classList.add('error');
-                // نمایش خطای شبکه واضح‌تر
-                messageDiv.innerHTML = `❌ خطای شبکه: مطمئن شوید Worker فعال است و تنظیمات Pages Routes درست است. (${error.message})`;
-            } finally {
-                messageDiv.style.display = 'block';
-            }
-        });
-    </script>
+            // اتصال به دکمه‌ها
+            document.getElementById('viewDataBtn').addEventListener('click', viewData);
+            document.getElementById('exportDataBtn').addEventListener('click', exportData);
+        });
+
+        // مدیریت فرم ثبت فروش
+        document.getElementById('salesForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const form = event.target;
+            const submitButton = document.getElementById('submitButton');
+            const messageDiv = document.getElementById('responseMessage');
+            
+            // پنهان کردن پیام قبلی
+            messageDiv.style.display = 'none';
+            messageDiv.className = 'message';
+            
+            // غیرفعال کردن دکمه حین پردازش
+            submitButton.disabled = true;
+            submitButton.textContent = 'در حال ثبت...';
+
+            const sellerId = form.sellerId.value.trim();
+            const imei = form.imei.value.trim();
+            
+            // اعتبارسنجی ابتدایی
+            if (!sellerId) {
+                showMessage('کد فروشنده الزامی است', 'error');
+                resetButton();
+                return;
+            }
+            
+            if (!imei || imei.length !== 15) {
+                showMessage('شماره IMEI باید دقیقاً 15 رقم باشد', 'error');
+                resetButton();
+                return;
+            }
+
+            const data = {
+                imei: imei,
+                phone_model: form.phoneModel.value.trim(),
+                sale_date: form.saleDate.value,
+                city: form.city.value.trim() || null,
+                phone_number: form.phoneNumber.value.trim() || null
+            };
+
+            try {
+                const response = await fetch(`${WORKER_BASE_URL}/api/sales/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Seller-ID': sellerId,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                // بررسی وضعیت پاسخ
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('پاسخ سرور به فرمت JSON نیست');
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage(`✅ ثبت موفق: ${result.message} (شناسه فروش: ${result.saleId || 'N/A'})`, 'success');
+                    // پاک کردن فیلدها و حفظ کد فروشنده
+                    form.reset();
+                    form.sellerId.value = sellerId; 
+                    setTodayDate();
+                } else {
+                    showMessage(`❌ خطا: ${result.message || 'مشکل نامشخص'}`, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Submit error:', error);
+                showMessage(`❌ خطای شبکه: ${error.message}`, 'error');
+            } finally {
+                resetButton();
+            }
+        });
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('responseMessage');
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = text;
+            messageDiv.style.display = 'block';
+        }
+
+        function resetButton() {
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = false;
+            submitButton.textContent = 'ثبت فروش';
+        }
+    </script>
 </body>
 </html>
