@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "include": [
+    "/api/*" // تضمین می‌کند که تمام /api/... به Pages Functions/Worker برود
+  ],
+  "exclude": [
+    "/build/*"
+  ]
+}
