@@ -5,75 +5,535 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سامانه ثبت فروش Honor</title>
     <style>
-        /* (کدهای CSS نهایی Minimal Glow) */
-        body { font-family: Tahoma, sans-serif; background-color: #0c0c0c; color: #d8d8d8; margin: 0; padding: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        .glow-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 10% 90%, rgba(173, 255, 47, 0.15), transparent 60%), radial-gradient(circle at 90% 10%, rgba(50, 205, 50, 0.15), transparent 60%); z-index: -1; }
-        .container { max-width: 700px; background: rgba(40, 40, 40, 0.3); padding: 30px; border-radius: 12px; box-shadow: 0 0 25px rgba(50, 205, 50, 0.3); border: 1px solid #4a7d52; backdrop-filter: blur(5px); position: relative; z-index: 10; }
-        h2 { border-bottom: 2px solid #32cd32; padding-bottom: 8px; color: #32cd32; margin-bottom: 20px; }
-        label { display: block; margin: 12px 0 4px; font-weight: 600; color: #a9f0b2; }
-        input[type="text"], input[type="date"] { width: 100%; padding: 10px; border: 1px solid #1a1a1a; border-radius: 4px; background-color: #1a1a1a; color: #fff; }
-        input:focus { box-shadow: 0 0 0 2px #32cd32; outline: none; }
-        button { background-color: #32cd32; color: #0c0c0c; padding: 10px 20px; border-radius: 4px; font-weight: bold; margin-top: 20px; cursor: pointer; border: none; }
-        button:hover { background-color: #2e8b57; box-shadow: 0 0 15px rgba(50, 205, 50, 0.8); }
-        button:disabled { background-color: #666; cursor: not-allowed; box-shadow: none; }
-        .message { padding: 12px; margin-top: 15px; border-radius: 4px; font-weight: bold; }
-        .success { background-color: #2e4d34; color: #9be6a8; border: 1px solid #4a7d52; }
-        .error { background-color: #4d2e2e; color: #ff9999; border: 1px solid #7d4a4a; }
-        .warning { background-color: #4d4d2e; color: #fff; border: 1px solid #7d7d4a; }
-        .dashboard-links a { background-color: #1e88e5; color: white; padding: 8px 12px; border-radius: 4px; margin-left: 8px; text-decoration: none; display: inline-block; margin-bottom: 5px; }
-        .dashboard-links a:hover { background-color: #1565c0; }
-        hr { border-color: rgba(50, 205, 50, 0.3); margin: 25px 0; }
-        .loading { color: #32cd32; }
-        .worker-status { padding: 8px; margin-bottom: 15px; border-radius: 4px; font-size: 0.9em; }
-        .status-online { background-color: #2e4d34; color: #9be6a8; border: 1px solid #4a7d52; }
-        .status-offline { background-color: #4d2e2e; color: #ff9999; border: 1px solid #7d4a4a; }
+        /* Modern Tech Theme - White with Blue/Tech Accents */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: #1a202c;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated tech background */
+        .tech-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 50%, #e2e8f0 100%);
+        }
+
+        .tech-background::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+            animation: techPulse 8s ease-in-out infinite;
+        }
+
+        @keyframes techPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Container */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #10b981, #8b5cf6);
+            border-radius: 20px 20px 0 0;
+        }
+
+        /* Headers */
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        /* Status indicator */
+        .worker-status {
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            font-weight: 500;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-online {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .status-offline {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .loading {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        /* Dashboard Section */
+        .dashboard-section {
+            background: linear-gradient(135deg, #f8fafc, #ffffff);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .dashboard-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .dashboard-links a, .admin-link {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .dashboard-links a:hover, .admin-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        }
+
+        .admin-section {
+            background: linear-gradient(135deg, #fef3c7, #fef9e5);
+            border: 2px solid #f59e0b;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .admin-section h3 {
+            color: #92400e;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        /* Form Section */
+        .form-section {
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="text"], input[type="date"], input[type="password"] {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+            font-size: 1rem;
+            color: #1f2937;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            outline: none;
+        }
+
+        /* Scanner button */
+        .scanner-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .scanner-btn:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Submit button */
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Messages */
+        .message {
+            padding: 15px 20px;
+            margin-top: 20px;
+            border-radius: 12px;
+            font-weight: 500;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: 1px solid #059669;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: 1px solid #dc2626;
+        }
+
+        .warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border: 1px solid #d97706;
+        }
+
+        /* Scanner modal */
+        .scanner-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .scanner-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+
+        .close-scanner {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        #scanner-video {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+                border-radius: 15px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .dashboard-links {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-links a, .admin-link {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+
+            input[type="text"], input[type="date"], input[type="password"] {
+                padding: 12px 16px;
+            }
+
+            .submit-btn {
+                padding: 15px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                margin: 5px;
+                padding: 15px;
+            }
+
+            .dashboard-section, .form-section {
+                padding: 20px;
+            }
+        }
+
+        /* Admin panel styling */
+        .admin-panel {
+            display: none;
+            background: linear-gradient(135deg, #fef3c7, #ffffff);
+            border: 2px solid #f59e0b;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .admin-panel h3 {
+            color: #92400e;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .admin-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .admin-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .admin-btn:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+        }
     </style>
 </head>
 <body>
-    <div class="glow-background"></div>
+    <div class="tech-background"></div>
 
     <div class="container">
-        <div id="workerStatus" class="worker-status">
-            <span class="loading">در حال بررسی وضعیت Worker...</span>
+        <!-- Header -->
+        <h1>🏆 سامانه مدیریت فروش Honor</h1>
+        <p class="subtitle">سیستم پیشرفته ثبت و مدیریت فروش گوشی‌های هوشمند</p>
+
+        <!-- Status -->
+        <div id="workerStatus" class="worker-status loading">
+            <span>🔄 در حال بررسی وضعیت سرور...</span>
         </div>
 
-        <h2>پنل مدیریتی و خروجی داده</h2>
-        <div class="dashboard-links">
-            <a href="#" id="viewDataBtn">مشاهده داده‌ها (JSON)</a>
-            <a href="#" id="exportDataBtn">دانلود خروجی Excel (CSV)</a>
-            <a href="https://honor-sales-worker.farsimen.workers.dev/" target="_blank">تست Worker API</a>
+        <!-- Dashboard Section -->
+        <div class="dashboard-section">
+            <h2>📊 پنل مدیریت داده‌ها</h2>
+            <div class="dashboard-links">
+                <a href="#" id="viewDataBtn">📋 مشاهده داده‌ها</a>
+                <a href="#" id="exportDataBtn">📁 دانلود Excel</a>
+                <button class="admin-link" id="adminToggle">🔐 پنل مدیریت</button>
+            </div>
+
+            <!-- Admin Panel -->
+            <div class="admin-panel" id="adminPanel">
+                <h3>🛡️ دسترسی مدیریت</h3>
+                <div class="form-group">
+                    <label for="adminPassword">رمز عبور مدیریت:</label>
+                    <input type="password" id="adminPassword" placeholder="رمز عبور را وارد کنید">
+                </div>
+                <div class="admin-controls">
+                    <button class="admin-btn" id="adminLoginBtn">ورود مدیریت</button>
+                    <button class="admin-btn" id="adminExportBtn" style="display:none;">دانلود مدیریت</button>
+                    <button class="admin-btn" id="clearDataBtn" style="display:none;">پاک کردن داده‌ها</button>
+                </div>
+            </div>
         </div>
 
-        <hr>
+        <!-- Form Section -->
+        <div class="form-section">
+            <h2>📱 فرم ثبت فروش جدید</h2>
+            <form id="salesForm">
+                <div class="form-group">
+                    <label for="sellerId">👤 کد فروشنده:</label>
+                    <input type="text" id="sellerId" name="sellerId" required value="seller-001" placeholder="کد فروشنده شما">
+                </div>
 
-        <h2>فرم ثبت فروش جدید</h2>
-        <form id="salesForm">
-            <label for="sellerId">کد فروشنده:</label>
-            <input type="text" id="sellerId" name="sellerId" required value="seller-001" placeholder="کد فروشنده شما">
+                <div class="form-group">
+                    <label for="imei">🔢 شماره IMEI:</label>
+                    <div class="input-group">
+                        <input type="text" id="imei" name="imei" required maxlength="15" minlength="15" placeholder="15 رقم شماره IMEI">
+                        <button type="button" class="scanner-btn" id="scannerBtn" title="اسکن بارکد">📷</button>
+                    </div>
+                </div>
 
-            <label for="imei">شماره IMEI:</label>
-            <input type="text" id="imei" name="imei" required maxlength="15" minlength="15" placeholder="15 رقم شماره IMEI">
+                <div class="form-group">
+                    <label for="phoneModel">📱 مدل گوشی:</label>
+                    <input type="text" id="phoneModel" name="phoneModel" required placeholder="مثال: Honor Magic6 Pro">
+                </div>
 
-            <label for="phoneModel">مدل گوشی:</label>
-            <input type="text" id="phoneModel" name="phoneModel" required placeholder="مثال: Magic6 Pro">
+                <div class="form-group">
+                    <label for="saleDate">📅 تاریخ فروش:</label>
+                    <input type="date" id="saleDate" name="saleDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="city">🏙️ شهر:</label>
+                    <input type="text" id="city" name="city" placeholder="نام شهر (اختیاری)">
+                </div>
 
-            <label for="saleDate">تاریخ فروش:</label>
-            <input type="date" id="saleDate" name="saleDate" required>
-            
-            <label for="city">شهر:</label>
-            <input type="text" id="city" name="city" placeholder="اختیاری">
+                <div class="form-group">
+                    <label for="phoneNumber">📞 شماره تماس مشتری:</label>
+                    <input type="text" id="phoneNumber" name="phoneNumber" placeholder="شماره تماس (اختیاری)">
+                </div>
 
-            <label for="phoneNumber">شماره تماس مشتری:</label>
-            <input type="text" id="phoneNumber" name="phoneNumber" placeholder="اختیاری">
-
-            <button type="submit" id="submitButton">ثبت فروش</button>
-            <div id="responseMessage" class="message" style="display: none;"></div>
-        </form>
+                <button type="submit" class="submit-btn" id="submitButton">
+                    ✨ ثبت فروش
+                </button>
+                
+                <div id="responseMessage" class="message" style="display: none;"></div>
+            </form>
+        </div>
     </div>
 
+    <!-- Scanner Modal -->
+    <div class="scanner-modal" id="scannerModal">
+        <div class="scanner-content">
+            <span class="close-scanner" id="closeScanner">&times;</span>
+            <h3>📷 اسکن بارکد IMEI</h3>
+            <video id="scanner-video" autoplay></video>
+            <p>بارکد یا QR Code را جلوی دوربین قرار دهید</p>
+            <button class="admin-btn" id="stopScanner">توقف اسکن</button>
+        </div>
+    </div>
+
+    <!-- Include QuaggaJS for barcode scanning -->
+    <script src="https://unpkg.com/quagga@0.12.1/dist/quagga.min.js"></script>
     <script>
-        // آدرس Worker API - بروزرسانی شده با آدرس واقعی
+        // آدرس Worker API
         const WORKER_BASE_URL = 'https://honor-sales-worker.farsimen.workers.dev';
+        const ADMIN_PASSWORD = 'Honor2025Admin!'; // رمز عبور مدیریت
+        let isAdminAuthenticated = false;
         
         // تابع تنظیم تاریخ روز
         function setTodayDate() {
@@ -96,13 +556,13 @@
                 if (response.ok) {
                     const data = await response.json();
                     statusDiv.className = 'worker-status status-online';
-                    statusDiv.innerHTML = `✅ Worker فعال - ${data.message || 'API Ready'}`;
+                    statusDiv.innerHTML = `✅ سرور فعال - ${data.message || 'API Ready'}`;
                 } else {
                     throw new Error(`HTTP ${response.status}`);
                 }
             } catch (error) {
                 statusDiv.className = 'worker-status status-offline';
-                statusDiv.innerHTML = `❌ Worker غیرفعال - ${error.message}`;
+                statusDiv.innerHTML = `❌ سرور غیرفعال - ${error.message}`;
             }
         }
 
@@ -113,35 +573,143 @@
                 if (response.ok) {
                     const data = await response.json();
                     const newWindow = window.open();
-                    newWindow.document.write(`<pre style="font-family: monospace; padding: 20px; background: #f5f5f5; direction: ltr;">${JSON.stringify(data, null, 2)}</pre>`);
+                    newWindow.document.write(`
+                        <html dir="rtl">
+                        <head><title>داده‌های فروش Honor</title></head>
+                        <body style="font-family: Tahoma; padding: 20px; background: #f8fafc;">
+                            <h2>📊 داده‌های فروش (${data.count} رکورد)</h2>
+                            <pre style="background: white; padding: 20px; border-radius: 10px; direction: ltr; overflow: auto;">${JSON.stringify(data, null, 2)}</pre>
+                        </body>
+                        </html>
+                    `);
                 } else {
-                    alert('خطا در بازیابی داده‌ها');
+                    alert('❌ خطا در بازیابی داده‌ها');
                 }
             } catch (error) {
-                alert('خطا در ارتباط با سرور');
+                alert('❌ خطا در ارتباط با سرور');
             }
         }
 
-        // تابع دانلود CSV
+        // تابع دانلود CSV (فقط برای کاربران عادی)
         async function exportData() {
+            if (!isAdminAuthenticated) {
+                alert('⚠️ این عملکرد فقط برای مدیران سیستم در دسترس است.');
+                return;
+            }
+            
             try {
                 const response = await fetch(`${WORKER_BASE_URL}/api/sales/export`);
                 if (response.ok) {
                     const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.style.display = 'none';
-                    a.href = url;
-                    a.download = `honor_sales_${new Date().toISOString().split('T')[0]}.csv`;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
+                    downloadFile(blob, `honor_sales_${new Date().toISOString().split('T')[0]}.csv`);
                 } else {
-                    alert('خطا در دانلود فایل');
+                    alert('❌ خطا در دانلود فایل');
                 }
             } catch (error) {
-                alert('خطا در ارتباط با سرور');
+                alert('❌ خطا در ارتباط با سرور');
+            }
+        }
+
+        // تابع دانلود فایل
+        function downloadFile(blob, filename) {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        // Scanner functionality
+        function initScanner() {
+            const video = document.getElementById('scanner-video');
+            
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment' // use back camera
+                    } 
+                })
+                .then(function(stream) {
+                    video.srcObject = stream;
+                    
+                    // Initialize Quagga for barcode scanning
+                    Quagga.init({
+                        inputStream: {
+                            name: "Live",
+                            type: "LiveStream",
+                            target: video,
+                            constraints: {
+                                width: 480,
+                                height: 320,
+                                facingMode: "environment"
+                            }
+                        },
+                        decoder: {
+                            readers: ['code_128_reader', 'ean_reader', 'ean_8_reader', 'code_39_reader']
+                        }
+                    }, function(err) {
+                        if (err) {
+                            console.log(err);
+                            return;
+                        }
+                        Quagga.start();
+                    });
+
+                    // Listen for barcode detection
+                    Quagga.onDetected(function(data) {
+                        const code = data.codeResult.code;
+                        if (code && code.length === 15) {
+                            document.getElementById('imei').value = code;
+                            closeScanner();
+                        }
+                    });
+                })
+                .catch(function(error) {
+                    console.log('Error accessing camera: ', error);
+                    alert('خطا در دسترسی به دوربین');
+                });
+            }
+        }
+
+        function closeScanner() {
+            const modal = document.getElementById('scannerModal');
+            const video = document.getElementById('scanner-video');
+            
+            modal.style.display = 'none';
+            
+            // Stop camera
+            if (video.srcObject) {
+                let stream = video.srcObject;
+                let tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+                video.srcObject = null;
+            }
+            
+            // Stop Quagga
+            if (typeof Quagga !== 'undefined') {
+                Quagga.stop();
+            }
+        }
+
+        // Admin functionality
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function authenticateAdmin() {
+            const password = document.getElementById('adminPassword').value;
+            if (password === ADMIN_PASSWORD) {
+                isAdminAuthenticated = true;
+                document.getElementById('adminExportBtn').style.display = 'block';
+                document.getElementById('clearDataBtn').style.display = 'block';
+                showMessage('✅ ورود مدیریت با موفقیت انجام شد', 'success');
+            } else {
+                showMessage('❌ رمز عبور نادرست', 'error');
             }
         }
 
@@ -150,9 +718,18 @@
             setTodayDate();
             checkWorkerStatus();
 
-            // اتصال به دکمه‌ها
+            // Event listeners
             document.getElementById('viewDataBtn').addEventListener('click', viewData);
             document.getElementById('exportDataBtn').addEventListener('click', exportData);
+            document.getElementById('scannerBtn').addEventListener('click', function() {
+                document.getElementById('scannerModal').style.display = 'flex';
+                initScanner();
+            });
+            document.getElementById('closeScanner').addEventListener('click', closeScanner);
+            document.getElementById('stopScanner').addEventListener('click', closeScanner);
+            document.getElementById('adminToggle').addEventListener('click', toggleAdminPanel);
+            document.getElementById('adminLoginBtn').addEventListener('click', authenticateAdmin);
+            document.getElementById('adminExportBtn').addEventListener('click', exportData);
         });
 
         // مدیریت فرم ثبت فروش
@@ -162,26 +739,23 @@
             const submitButton = document.getElementById('submitButton');
             const messageDiv = document.getElementById('responseMessage');
             
-            // پنهان کردن پیام قبلی
             messageDiv.style.display = 'none';
             messageDiv.className = 'message';
             
-            // غیرفعال کردن دکمه حین پردازش
             submitButton.disabled = true;
-            submitButton.textContent = 'در حال ثبت...';
+            submitButton.textContent = '🔄 در حال ثبت...';
 
             const sellerId = form.sellerId.value.trim();
             const imei = form.imei.value.trim();
             
-            // اعتبارسنجی ابتدایی
             if (!sellerId) {
-                showMessage('کد فروشنده الزامی است', 'error');
+                showMessage('❌ کد فروشنده الزامی است', 'error');
                 resetButton();
                 return;
             }
             
             if (!imei || imei.length !== 15) {
-                showMessage('شماره IMEI باید دقیقاً 15 رقم باشد', 'error');
+                showMessage('❌ شماره IMEI باید دقیقاً 15 رقم باشد', 'error');
                 resetButton();
                 return;
             }
@@ -205,7 +779,6 @@
                     body: JSON.stringify(data)
                 });
 
-                // بررسی وضعیت پاسخ
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
@@ -218,8 +791,7 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    showMessage(`✅ ثبت موفق: ${result.message} (شناسه فروش: ${result.saleId || 'N/A'})`, 'success');
-                    // پاک کردن فیلدها و حفظ کد فروشنده
+                    showMessage(`✅ ثبت موفق: ${result.message} (ID: ${result.saleId || 'N/A'})`, 'success');
                     form.reset();
                     form.sellerId.value = sellerId; 
                     setTodayDate();
@@ -245,7 +817,7 @@
         function resetButton() {
             const submitButton = document.getElementById('submitButton');
             submitButton.disabled = false;
-            submitButton.textContent = 'ثبت فروش';
+            submitButton.textContent = '✨ ثبت فروش';
         }
     </script>
 </body>
