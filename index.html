@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سامانه ثبت فروش Honor</title>
+    <title>سامانه مدیریت فروش Honor</title>
     <style>
-        /* Modern Tech Theme - White with Blue/Tech Accents */
         * {
             margin: 0;
             padding: 0;
@@ -14,260 +13,285 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            color: #1a202c;
+            background: linear-gradient(135deg, #0a0a23 0%, #1a1a3a 30%, #000015 100%);
+            color: #ffffff;
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
         }
 
-        /* Animated tech background */
-        .tech-background {
+        /* Galaxy Starfield Background */
+        #starfield {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             z-index: -1;
-            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 50%, #e2e8f0 100%);
         }
 
-        .tech-background::before {
-            content: '';
-            position: absolute;
+        /* Top Navigation Bar */
+        .top-nav {
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
-            animation: techPulse 8s ease-in-out infinite;
-        }
-
-        @keyframes techPulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.7; }
-        }
-
-        /* Container */
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            right: 0;
+            height: 60px;
+            background: rgba(16, 16, 35, 0.95);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #4fc3f7;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .admin-menu {
             position: relative;
         }
 
-        .container::before {
+        .admin-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        .admin-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.5);
+        }
+
+        .admin-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: rgba(16, 16, 35, 0.95);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            min-width: 200px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 1001;
+        }
+
+        .admin-dropdown.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .admin-dropdown button {
+            width: 100%;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            text-align: right;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .admin-dropdown button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .admin-dropdown button:first-child {
+            border-radius: 12px 12px 0 0;
+        }
+
+        .admin-dropdown button:last-child {
+            border-radius: 0 0 12px 12px;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 800px;
+            margin: 80px auto 20px;
+            padding: 20px;
+        }
+
+        /* Status Card */
+        .status-card {
+            background: rgba(45, 45, 57, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .status-online {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .status-offline {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        /* Main Form Card */
+        .form-card {
+            background: rgba(45, 45, 57, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #3b82f6, #10b981, #8b5cf6);
-            border-radius: 20px 20px 0 0;
+            height: 2px;
+            background: linear-gradient(90deg, #4fc3f7, #6c5ce7, #a29bfe);
         }
 
-        /* Headers */
-        h1, h2 {
+        .form-title {
             text-align: center;
-            margin-bottom: 25px;
-            color: #1e293b;
+            font-size: 1.8rem;
             font-weight: 600;
-        }
-
-        h1 {
-            font-size: 2.2rem;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #4fc3f7, #a29bfe);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
         }
 
-        .subtitle {
-            text-align: center;
-            color: #64748b;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 20px;
         }
 
-        /* Status indicator */
-        .worker-status {
-            padding: 15px;
-            margin-bottom: 25px;
-            border-radius: 12px;
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
             font-weight: 500;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .status-online {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-        }
-
-        .status-offline {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-        }
-
-        .loading {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-        }
-
-        /* Dashboard Section */
-        .dashboard-section {
-            background: linear-gradient(135deg, #f8fafc, #ffffff);
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(59, 130, 246, 0.1);
-        }
-
-        .dashboard-links {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .dashboard-links a, .admin-link {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 12px;
-            text-decoration: none;
-            text-align: center;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-            border: none;
-            cursor: pointer;
+            color: #b8b8d1;
             font-size: 0.9rem;
         }
 
-        .dashboard-links a:hover, .admin-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-        }
-
-        .admin-section {
-            background: linear-gradient(135deg, #fef3c7, #fef9e5);
-            border: 2px solid #f59e0b;
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .admin-section h3 {
-            color: #92400e;
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-        }
-
-        /* Form Section */
-        .form-section {
-            background: linear-gradient(135deg, #ffffff, #f8fafc);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(59, 130, 246, 0.1);
-        }
-
-        /* Form styling */
-        .form-group {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #374151;
-            font-size: 0.95rem;
-        }
-
-        .input-group {
+        .input-container {
             position: relative;
             display: flex;
             align-items: center;
         }
 
-        input[type="text"], input[type="date"], input[type="password"] {
+        .form-input {
             width: 100%;
             padding: 15px 20px;
-            border: 2px solid #e5e7eb;
+            background: rgba(224, 224, 230, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            background: white;
+            color: #ffffff;
             font-size: 1rem;
-            color: #1f2937;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(5px);
         }
 
-        input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        .form-input:focus {
             outline: none;
+            border-color: #4fc3f7;
+            box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.2);
+            background: rgba(224, 224, 230, 0.15);
         }
 
-        /* Scanner button */
-        .scanner-btn {
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* IMEI Input with Scanner */
+        .imei-input {
+            padding-left: 50px;
+        }
+
+        .scanner-icon {
             position: absolute;
-            right: 10px;
+            left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
             cursor: pointer;
-            font-size: 1.2rem;
             transition: all 0.3s ease;
             z-index: 10;
         }
 
-        .scanner-btn:hover {
-            background: linear-gradient(135deg, #059669, #047857);
+        .scanner-icon:hover {
             transform: translateY(-50%) scale(1.1);
         }
 
-        /* Submit button */
+        /* Barcode SVG Icon */
+        .barcode-icon {
+            width: 24px;
+            height: 24px;
+            fill: #4fc3f7;
+        }
+
+        /* Submit Button */
         .submit-btn {
             width: 100%;
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-            color: white;
-            padding: 18px;
+            padding: 16px;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
             border: none;
             border-radius: 12px;
+            color: white;
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             margin-top: 20px;
-            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
         }
 
         .submit-btn:hover:not(:disabled) {
-            background: linear-gradient(135deg, #7c3aed, #6d28d9);
             transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4);
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.5);
         }
 
         .submit-btn:disabled {
-            background: #9ca3af;
+            background: rgba(255, 255, 255, 0.1);
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
@@ -280,28 +304,27 @@
             border-radius: 12px;
             font-weight: 500;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease;
         }
 
-        .success {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            border: 1px solid #059669;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .error {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            border: 1px solid #dc2626;
+        .message.success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
         }
 
-        .warning {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
-            border: 1px solid #d97706;
+        .message.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
         }
 
-        /* Scanner modal */
+        /* Scanner Modal */
         .scanner-modal {
             display: none;
             position: fixed;
@@ -310,19 +333,21 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
+            z-index: 2000;
             justify-content: center;
             align-items: center;
         }
 
         .scanner-content {
-            background: white;
+            background: rgba(16, 16, 35, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
             padding: 30px;
-            border-radius: 15px;
             max-width: 500px;
             width: 90%;
             text-align: center;
             position: relative;
+            backdrop-filter: blur(15px);
         }
 
         .close-scanner {
@@ -331,196 +356,287 @@
             right: 20px;
             font-size: 24px;
             cursor: pointer;
-            color: #6b7280;
+            color: #ffffff;
+            transition: color 0.3s ease;
+        }
+
+        .close-scanner:hover {
+            color: #ef4444;
         }
 
         #scanner-video {
             width: 100%;
             max-width: 400px;
             height: auto;
-            border-radius: 10px;
+            border-radius: 12px;
             margin: 20px 0;
+        }
+
+        /* Data Table Modal */
+        .data-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .data-content {
+            background: rgba(16, 16, 35, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 95vw;
+            max-height: 90vh;
+            width: 1000px;
+            position: relative;
+            backdrop-filter: blur(15px);
+            overflow: hidden;
+        }
+
+        .data-table-container {
+            max-height: 70vh;
+            overflow: auto;
+            margin-top: 20px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 8px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .data-table th {
+            background: rgba(108, 92, 231, 0.2);
+            font-weight: 600;
+            color: #4fc3f7;
+            position: sticky;
+            top: 0;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .data-table tr:hover {
+            background: rgba(108, 92, 231, 0.1);
+        }
+
+        /* Confirmation Modal */
+        .confirm-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .confirm-content {
+            background: rgba(16, 16, 35, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            backdrop-filter: blur(15px);
+        }
+
+        .confirm-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .btn-confirm,
+        .btn-cancel {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .btn-confirm:hover,
+        .btn-cancel:hover {
+            transform: translateY(-1px);
         }
 
         /* Responsive */
         @media (max-width: 768px) {
             .container {
-                margin: 10px;
-                padding: 20px;
-                border-radius: 15px;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            .dashboard-links {
-                grid-template-columns: 1fr;
-            }
-
-            .dashboard-links a, .admin-link {
-                padding: 12px 16px;
-                font-size: 0.9rem;
-            }
-
-            .form-section {
-                padding: 20px;
-            }
-
-            input[type="text"], input[type="date"], input[type="password"] {
-                padding: 12px 16px;
-            }
-
-            .submit-btn {
+                margin: 70px 10px 20px;
                 padding: 15px;
+            }
+
+            .form-card {
+                padding: 20px;
+            }
+
+            .form-title {
+                font-size: 1.5rem;
+            }
+
+            .top-nav {
+                padding: 0 15px;
+            }
+
+            .logo {
                 font-size: 1rem;
+            }
+
+            .data-content {
+                padding: 20px;
+                max-width: 95vw;
+            }
+
+            .data-table {
+                font-size: 0.8rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 8px 4px;
             }
         }
 
         @media (max-width: 480px) {
-            h1 {
-                font-size: 1.5rem;
+            .form-input {
+                padding: 12px 16px;
+                font-size: 0.9rem;
             }
 
-            .container {
-                margin: 5px;
-                padding: 15px;
+            .imei-input {
+                padding-left: 45px;
             }
 
-            .dashboard-section, .form-section {
-                padding: 20px;
+            .scanner-icon {
+                left: 12px;
             }
-        }
 
-        /* Admin panel styling */
-        .admin-panel {
-            display: none;
-            background: linear-gradient(135deg, #fef3c7, #ffffff);
-            border: 2px solid #f59e0b;
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 20px;
-        }
-
-        .admin-panel h3 {
-            color: #92400e;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-        }
-
-        .admin-controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-        }
-
-        .admin-btn {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
-        }
-
-        .admin-btn:hover {
-            background: linear-gradient(135deg, #d97706, #b45309);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
-        }
-
-        .admin-success {
-            background: linear-gradient(135deg, #10b981, #059669) !important;
-        }
-
-        .scanner-instruction {
-            background: linear-gradient(135deg, #e0f2fe, #ffffff);
-            border: 1px solid #0ea5e9;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #0c4a6e;
+            .barcode-icon {
+                width: 20px;
+                height: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="tech-background"></div>
+    <!-- Starfield Canvas Background -->
+    <canvas id="starfield"></canvas>
+
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="logo">
+            🏆 سامانه مدیریت فروش Honor
+        </div>
+        <div class="admin-menu">
+            <button class="admin-toggle" id="adminToggle">
+                👤
+            </button>
+            <div class="admin-dropdown" id="adminDropdown">
+                <button id="viewDataBtn">
+                    📋 مشاهده داده‌ها
+                </button>
+                <button id="adminExportBtn" style="display: none;">
+                    📁 دانلود مدیریت
+                </button>
+                <button id="clearDataBtn" style="display: none;">
+                    🗑️ پاک کردن داده‌ها
+                </button>
+                <button id="adminLoginBtn">
+                    🔐 ورود مدیریت
+                </button>
+                <button id="adminLogoutBtn" style="display: none;">
+                    🚪 خروج
+                </button>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
-        <!-- Header -->
-        <h1>🏆 سامانه مدیریت فروش Honor</h1>
-        <p class="subtitle">سیستم پیشرفته ثبت و مدیریت فروش گوشی‌های هوشمند</p>
-
-        <!-- Status -->
-        <div id="workerStatus" class="worker-status loading">
-            <span>🔄 در حال بررسی وضعیت سرور...</span>
+        <!-- Status Card -->
+        <div class="status-card" id="statusCard">
+            <span id="statusText">🔄 در حال بررسی وضعیت سرور...</span>
         </div>
 
-        <!-- Dashboard Section -->
-        <div class="dashboard-section">
-            <h2>📊 پنل مدیریت داده‌ها</h2>
-            <div class="dashboard-links">
-                <a href="#" id="viewDataBtn">📋 مشاهده داده‌ها</a>
-                <button class="admin-link" id="adminToggle">🔐 پنل مدیریت</button>
-            </div>
-
-            <!-- Admin Panel -->
-            <div class="admin-panel" id="adminPanel">
-                <h3>🛡️ دسترسی مدیریت</h3>
-                <div class="form-group">
-                    <label for="adminPassword">رمز عبور مدیریت:</label>
-                    <input type="password" id="adminPassword" placeholder="رمز عبور را وارد کنید">
-                </div>
-                <div class="admin-controls">
-                    <button class="admin-btn" id="adminLoginBtn">ورود مدیریت</button>
-                    <button class="admin-btn" id="adminExportBtn" style="display:none;">دانلود مدیریت</button>
-                    <button class="admin-btn" id="clearDataBtn" style="display:none;">پاک کردن داده‌ها</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Form Section -->
-        <div class="form-section">
-            <h2>📱 فرم ثبت فروش جدید</h2>
+        <!-- Main Form -->
+        <div class="form-card">
+            <h2 class="form-title">📱 فرم ثبت فروش جدید</h2>
+            
             <form id="salesForm">
                 <div class="form-group">
-                    <label for="sellerId">👤 کد فروشنده:</label>
-                    <input type="text" id="sellerId" name="sellerId" required value="seller-001" placeholder="کد فروشنده شما">
+                    <label class="form-label" for="sellerId">👤 کد فروشنده:</label>
+                    <input type="text" id="sellerId" name="sellerId" class="form-input" required value="seller-001" placeholder="کد فروشنده شما">
                 </div>
 
                 <div class="form-group">
-                    <label for="imei">🔢 شماره IMEI:</label>
-                    <div class="input-group">
-                        <input type="text" id="imei" name="imei" required maxlength="15" minlength="15" placeholder="15 رقم شماره IMEI">
-                        <button type="button" class="scanner-btn" id="scannerBtn" title="اسکن بارکد">📷</button>
+                    <label class="form-label" for="imei">🔢 شماره IMEI:</label>
+                    <div class="input-container">
+                        <input type="text" id="imei" name="imei" class="form-input imei-input" required maxlength="15" minlength="15" placeholder="شماره IMEI را وارد یا اسکن کنید">
+                        <div class="scanner-icon" id="scannerBtn" title="اسکن بارکد IMEI">
+                            <svg class="barcode-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 6C2 4.89543 2.89543 4 4 4H6C7.10457 4 8 4.89543 8 6V8C8 9.10457 7.10457 10 6 10H4C2.89543 10 2 9.10457 2 8V6Z" fill="currentColor"/>
+                                <path d="M2 16C2 14.8954 2.89543 14 4 14H6C7.10457 14 8 14.8954 8 16V18C8 19.1046 7.10457 20 6 20H4C2.89543 20 2 19.1046 2 18V16Z" fill="currentColor"/>
+                                <path d="M14 4H16C17.1046 4 18 4.89543 18 6V8C18 9.10457 17.1046 10 16 10H14C12.8954 10 12 9.10457 12 8V6C12 4.89543 12.8954 4 14 4Z" fill="currentColor"/>
+                                <path d="M12 16C12 14.8954 12.8954 14 14 14H16C17.1046 14 18 14.8954 18 16V18C18 19.1046 17.1046 20 16 20H14C12.8954 20 12 19.1046 12 18V16Z" fill="currentColor"/>
+                                <path d="M20 6C20 4.89543 20.8954 4 22 4C23.1046 4 24 4.89543 24 6V18C24 19.1046 23.1046 20 22 20C20.8954 20 20 19.1046 20 18V6Z" fill="currentColor"/>
+                                <path d="M1 2H3V4H1V2Z" fill="currentColor"/>
+                                <path d="M1 20H3V22H1V20Z" fill="currentColor"/>
+                                <path d="M21 2H23V4H21V2Z" fill="currentColor"/>
+                                <path d="M21 20H23V22H21V20Z" fill="currentColor"/>
+                            </svg>
+                        </div>
                     </div>
-                    <div class="scanner-instruction">
-                        📍 برای اسکن بارکد IMEI از جعبه گوشی، روی دکمه دوربین کلیک کنید
-                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="phoneModel">📱 مدل گوشی:</label>
-                    <input type="text" id="phoneModel" name="phoneModel" required placeholder="مثال: Honor Magic6 Pro">
+                    <label class="form-label" for="phoneModel">📱 مدل گوشی:</label>
+                    <input type="text" id="phoneModel" name="phoneModel" class="form-input" required placeholder="مثال: Honor Magic6 Pro">
                 </div>
 
                 <div class="form-group">
-                    <label for="saleDate">📅 تاریخ فروش:</label>
-                    <input type="date" id="saleDate" name="saleDate" required>
+                    <label class="form-label" for="saleDate">📅 تاریخ فروش:</label>
+                    <input type="date" id="saleDate" name="saleDate" class="form-input" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="city">🏙️ شهر:</label>
-                    <input type="text" id="city" name="city" placeholder="نام شهر (اختیاری)">
+                    <label class="form-label" for="city">🏙️ شهر:</label>
+                    <input type="text" id="city" name="city" class="form-input" placeholder="نام شهر (اختیاری)">
                 </div>
 
                 <div class="form-group">
-                    <label for="phoneNumber">📞 شماره تماس مشتری:</label>
-                    <input type="text" id="phoneNumber" name="phoneNumber" placeholder="شماره تماس (اختیاری)">
+                    <label class="form-label" for="phoneNumber">📞 شماره تماس مشتری:</label>
+                    <input type="text" id="phoneNumber" name="phoneNumber" class="form-input" placeholder="شماره تماس (اختیاری)">
                 </div>
 
                 <button type="submit" class="submit-btn" id="submitButton">
@@ -538,29 +654,175 @@
             <span class="close-scanner" id="closeScanner">&times;</span>
             <h3>📷 اسکن بارکد IMEI</h3>
             <video id="scanner-video" autoplay></video>
-            <p>بارکد یا QR Code را جلوی دوربین قرار دهید</p>
-            <button class="admin-btn" id="stopScanner">توقف اسکن</button>
+            <p>بارکد IMEI را جلوی دوربین قرار دهید</p>
+            <button class="btn-cancel" id="stopScanner">توقف اسکن</button>
+        </div>
+    </div>
+
+    <!-- Data Table Modal -->
+    <div class="data-modal" id="dataModal">
+        <div class="data-content">
+            <span class="close-scanner" id="closeDataModal">&times;</span>
+            <h3>📊 داده‌های فروش Honor</h3>
+            <div class="data-table-container">
+                <table class="data-table" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>شناسه</th>
+                            <th>کد فروشنده</th>
+                            <th>IMEI</th>
+                            <th>مدل</th>
+                            <th>تاریخ فروش</th>
+                            <th>شهر</th>
+                            <th>شماره تماس</th>
+                            <th>تاریخ ثبت</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Password Modal -->
+    <div class="confirm-modal" id="passwordModal">
+        <div class="confirm-content">
+            <h3>🔐 ورود مدیریت</h3>
+            <p>رمز عبور مدیریت را وارد کنید:</p>
+            <input type="password" id="adminPassword" class="form-input" placeholder="رمز عبور" style="margin: 15px 0;">
+            <div class="confirm-buttons">
+                <button class="btn-cancel" id="cancelPassword">انصراف</button>
+                <button class="btn-confirm" id="submitPassword">ورود</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="confirm-modal" id="confirmModal">
+        <div class="confirm-content">
+            <h3>⚠️ تایید حذف</h3>
+            <p>آیا مطمئن هستید که می‌خواهید تمام داده‌ها را پاک کنید؟</p>
+            <p style="color: #ef4444; font-size: 0.9rem; margin-top: 10px;">این عمل غیرقابل برگشت است!</p>
+            <div class="confirm-buttons">
+                <button class="btn-cancel" id="cancelDelete">انصراف</button>
+                <button class="btn-confirm" id="confirmDelete">حذف کن</button>
+            </div>
         </div>
     </div>
 
     <!-- Include QuaggaJS for barcode scanning -->
     <script src="https://unpkg.com/quagga@0.12.1/dist/quagga.min.js"></script>
     <script>
-        // آدرس Worker API
+        // Configuration
         const WORKER_BASE_URL = 'https://honor-sales-worker.farsimen.workers.dev';
-        const ADMIN_PASSWORD = 'Honor2025Admin!'; // رمز عبور مدیریت
+        const ADMIN_PASSWORD = 'Honor2025Admin!';
         let isAdminAuthenticated = false;
-        
-        // تابع تنظیم تاریخ روز
+
+        // Starfield Animation
+        class StarField {
+            constructor(canvasId, numStars = 200) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.numStars = numStars;
+                this.stars = [];
+                this.animationId = null;
+                
+                this.resizeCanvas();
+                this.createStars();
+                this.animate();
+                
+                window.addEventListener('resize', () => this.resizeCanvas());
+            }
+            
+            resizeCanvas() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+            
+            createStars() {
+                this.stars = [];
+                for (let i = 0; i < this.numStars; i++) {
+                    this.stars.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        radius: Math.random() * 2 + 0.5,
+                        alpha: Math.random() * 0.8 + 0.2,
+                        twinkle: Math.random() * 0.02 + 0.01,
+                        twinkleDirection: 1
+                    });
+                }
+            }
+            
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.stars.forEach(star => {
+                    // Twinkling effect
+                    star.alpha += star.twinkle * star.twinkleDirection;
+                    if (star.alpha >= 1 || star.alpha <= 0.2) {
+                        star.twinkleDirection *= -1;
+                    }
+                    
+                    // Draw star
+                    this.ctx.beginPath();
+                    this.ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    this.ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+                    this.ctx.fill();
+                    
+                    // Add some colored stars
+                    if (Math.random() < 0.1) {
+                        this.ctx.shadowColor = Math.random() < 0.5 ? '#4fc3f7' : '#a29bfe';
+                        this.ctx.shadowBlur = star.radius * 2;
+                        this.ctx.fill();
+                        this.ctx.shadowBlur = 0;
+                    }
+                });
+                
+                this.animationId = requestAnimationFrame(() => this.animate());
+            }
+            
+            destroy() {
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+            }
+        }
+
+        // Initialize starfield
+        const starField = new StarField('starfield');
+
+        // Utility Functions
         function setTodayDate() {
             const now = new Date();
             const today = now.toISOString().split('T')[0]; 
             document.getElementById('saleDate').value = today;
         }
-        
-        // تابع بررسی وضعیت Worker
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('responseMessage');
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = text;
+            messageDiv.style.display = 'block';
+
+            if (type === 'success') {
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function resetSubmitButton() {
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = false;
+            submitButton.textContent = '✨ ثبت فروش';
+        }
+
+        // Status Check
         async function checkWorkerStatus() {
-            const statusDiv = document.getElementById('workerStatus');
+            const statusCard = document.getElementById('statusCard');
+            const statusText = document.getElementById('statusText');
+            
             try {
                 const response = await fetch(`${WORKER_BASE_URL}/`, {
                     method: 'GET',
@@ -571,55 +833,101 @@
                 
                 if (response.ok) {
                     const data = await response.json();
-                    statusDiv.className = 'worker-status status-online';
-                    statusDiv.innerHTML = `✅ سرور فعال - ${data.message || 'API Ready'}`;
+                    statusCard.className = 'status-card status-online';
+                    statusText.innerHTML = `✅ سرور فعال - ${data.message || 'API Ready'}`;
                 } else {
                     throw new Error(`HTTP ${response.status}`);
                 }
             } catch (error) {
-                statusDiv.className = 'worker-status status-offline';
-                statusDiv.innerHTML = `❌ سرور غیرفعال - ${error.message}`;
+                statusCard.className = 'status-card status-offline';
+                statusText.innerHTML = `❌ سرور غیرفعال - ${error.message}`;
             }
         }
 
-        // تابع مشاهده داده‌ها
+        // Admin Functions
+        function toggleAdminDropdown() {
+            const dropdown = document.getElementById('adminDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        function showPasswordModal() {
+            document.getElementById('passwordModal').style.display = 'flex';
+        }
+
+        function hidePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('adminPassword').value = '';
+        }
+
+        function authenticateAdmin() {
+            const password = document.getElementById('adminPassword').value;
+            if (password === ADMIN_PASSWORD) {
+                isAdminAuthenticated = true;
+                document.getElementById('adminExportBtn').style.display = 'block';
+                document.getElementById('clearDataBtn').style.display = 'block';
+                document.getElementById('adminLoginBtn').style.display = 'none';
+                document.getElementById('adminLogoutBtn').style.display = 'block';
+                hidePasswordModal();
+                showMessage('✅ ورود مدیریت با موفقیت انجام شد', 'success');
+            } else {
+                showMessage('❌ رمز عبور نادرست', 'error');
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminAuthenticated = false;
+            document.getElementById('adminExportBtn').style.display = 'none';
+            document.getElementById('clearDataBtn').style.display = 'none';
+            document.getElementById('adminLoginBtn').style.display = 'block';
+            document.getElementById('adminLogoutBtn').style.display = 'none';
+            document.getElementById('adminDropdown').classList.remove('show');
+            showMessage('🚪 خروج از پنل مدیریت', 'success');
+        }
+
+        // Data Functions
         async function viewData() {
             try {
                 const response = await fetch(`${WORKER_BASE_URL}/api/sales/data`);
                 if (response.ok) {
                     const data = await response.json();
-                    const newWindow = window.open();
-                    newWindow.document.write(`
-                        <html dir="rtl">
-                        <head>
-                            <title>داده‌های فروش Honor</title>
-                            <style>
-                                body { font-family: Tahoma; padding: 20px; background: #f8fafc; }
-                                .header { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
-                                .data { background: white; padding: 20px; border-radius: 10px; direction: ltr; overflow: auto; white-space: pre-wrap; font-family: 'Courier New', monospace; }
-                            </style>
-                        </head>
-                        <body>
-                            <div class="header">
-                                <h2>📊 داده‌های فروش Honor</h2>
-                                <p>تعداد کل: ${data.count} رکورد</p>
-                            </div>
-                            <div class="data">${JSON.stringify(data, null, 2)}</div>
-                        </body>
-                        </html>
-                    `);
+                    displayDataTable(data.data || []);
                 } else {
-                    alert('❌ خطا در بازیابی داده‌ها');
+                    showMessage('❌ خطا در بازیابی داده‌ها', 'error');
                 }
             } catch (error) {
-                alert('❌ خطا در ارتباط با سرور');
+                showMessage('❌ خطا در ارتباط با سرور', 'error');
             }
         }
 
-        // تابع دانلود CSV (فقط برای مدیران)
+        function displayDataTable(data) {
+            const tableBody = document.getElementById('dataTableBody');
+            tableBody.innerHTML = '';
+            
+            if (data.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;">هیچ داده‌ای یافت نشد</td></tr>';
+            } else {
+                data.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.id || '-'}</td>
+                        <td>${item.seller_id || '-'}</td>
+                        <td>${item.imei || '-'}</td>
+                        <td>${item.phone_model || '-'}</td>
+                        <td>${item.sale_date || '-'}</td>
+                        <td>${item.city || '-'}</td>
+                        <td>${item.phone_number || '-'}</td>
+                        <td>${new Date(item.created_at).toLocaleString('fa-IR') || '-'}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+            
+            document.getElementById('dataModal').style.display = 'flex';
+        }
+
         async function exportData() {
             if (!isAdminAuthenticated) {
-                alert('⚠️ این عملکرد فقط برای مدیران سیستم در دسترس است.');
+                showMessage('⚠️ این عملکرد فقط برای مدیران در دسترس است', 'error');
                 return;
             }
             
@@ -632,25 +940,37 @@
                 
                 if (response.ok) {
                     const blob = await response.blob();
-                    downloadFile(blob, `honor_sales_${new Date().toISOString().split('T')[0]}.csv`);
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `honor_sales_${new Date().toISOString().split('T')[0]}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    showMessage('✅ خروجی با موفقیت دانلود شد', 'success');
                 } else if (response.status === 401) {
-                    alert('❌ دسترسی غیرمجاز: لطفاً ابتدا وارد شوید');
+                    showMessage('❌ دسترسی غیرمجاز', 'error');
                 } else {
-                    alert('❌ خطا در دانلود فایل');
+                    showMessage('❌ خطا در دانلود فایل', 'error');
                 }
             } catch (error) {
-                alert('❌ خطا در ارتباط با سرور');
+                showMessage('❌ خطا در ارتباط با سرور', 'error');
             }
         }
 
-        // تابع پاک کردن داده‌ها (فقط مدیر)
+        function showConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+
+        function hideConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+        }
+
         async function clearData() {
             if (!isAdminAuthenticated) {
-                alert('⚠️ این عملکرد فقط برای مدیران سیستم در دسترس است.');
-                return;
-            }
-
-            if (!confirm('⚠️ آیا مطمئن هستید که می‌خواهید تمام داده‌ها را پاک کنید؟ این عمل غیرقابل برگشت است!')) {
+                showMessage('⚠️ این عملکرد فقط برای مدیران در دسترس است', 'error');
                 return;
             }
             
@@ -664,44 +984,31 @@
                 
                 if (response.ok) {
                     const result = await response.json();
-                    alert(`✅ ${result.message}`);
+                    showMessage(`✅ ${result.message}`, 'success');
+                    hideConfirmModal();
                 } else if (response.status === 401) {
-                    alert('❌ دسترسی غیرمجاز: لطفاً ابتدا وارد شوید');
+                    showMessage('❌ دسترسی غیرمجاز', 'error');
                 } else {
-                    alert('❌ خطا در پاک کردن داده‌ها');
+                    showMessage('❌ خطا در پاک کردن داده‌ها', 'error');
                 }
             } catch (error) {
-                alert('❌ خطا در ارتباط با سرور');
+                showMessage('❌ خطا در ارتباط با سرور', 'error');
             }
         }
 
-        // تابع دانلود فایل
-        function downloadFile(blob, filename) {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-        }
-
-        // Scanner functionality
+        // Scanner Functions
         function initScanner() {
             const video = document.getElementById('scanner-video');
             
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 navigator.mediaDevices.getUserMedia({ 
                     video: { 
-                        facingMode: 'environment' // use back camera
+                        facingMode: 'environment'
                     } 
                 })
                 .then(function(stream) {
                     video.srcObject = stream;
                     
-                    // Initialize Quagga for barcode scanning
                     Quagga.init({
                         inputStream: {
                             name: "Live",
@@ -724,12 +1031,10 @@
                         Quagga.start();
                     });
 
-                    // Listen for barcode detection
                     Quagga.onDetected(function(data) {
                         const code = data.codeResult.code;
                         console.log('Detected barcode:', code);
                         
-                        // Extract IMEI from barcode (handle different formats)
                         let imei = extractIMEIFromBarcode(code);
                         
                         if (imei && imei.length === 15) {
@@ -737,7 +1042,6 @@
                             closeScanner();
                             showMessage('✅ شماره IMEI با موفقیت اسکن شد!', 'success');
                         } else if (code.length === 15 && /^\d{15}$/.test(code)) {
-                            // Direct 15-digit IMEI
                             document.getElementById('imei').value = code;
                             closeScanner();
                             showMessage('✅ شماره IMEI با موفقیت اسکن شد!', 'success');
@@ -746,25 +1050,20 @@
                 })
                 .catch(function(error) {
                     console.log('Error accessing camera: ', error);
-                    alert('❌ خطا در دسترسی به دوربین. لطفاً مجوز دسترسی به دوربین را بدهید.');
+                    showMessage('❌ خطا در دسترسی به دوربین', 'error');
                 });
             } else {
-                alert('❌ مرورگر شما از دوربین پشتیبانی نمی‌کند.');
+                showMessage('❌ مرورگر شما از دوربین پشتیبانی نمی‌کند', 'error');
             }
         }
 
-        // Extract IMEI from different barcode formats
         function extractIMEIFromBarcode(barcode) {
-            // Handle different barcode formats
             if (barcode.includes('IMEI')) {
-                // Format: "IMEI: 123456789012345" or "IMEI1:123456789012345"
                 const match = barcode.match(/IMEI\s*[1:]?\s*([0-9]{15})/);
                 return match ? match[1] : null;
             } else if (/^\d{15}$/.test(barcode)) {
-                // Direct 15-digit number
                 return barcode;
             } else if (barcode.length > 15) {
-                // Try to extract 15 consecutive digits
                 const match = barcode.match(/([0-9]{15})/);
                 return match ? match[1] : null;
             }
@@ -777,7 +1076,6 @@
             
             modal.style.display = 'none';
             
-            // Stop camera
             if (video.srcObject) {
                 let stream = video.srcObject;
                 let tracks = stream.getTracks();
@@ -785,62 +1083,12 @@
                 video.srcObject = null;
             }
             
-            // Stop Quagga
             if (typeof Quagga !== 'undefined') {
                 Quagga.stop();
             }
         }
 
-        // Admin functionality
-        function toggleAdminPanel() {
-            const panel = document.getElementById('adminPanel');
-            const isVisible = panel.style.display !== 'none';
-            panel.style.display = isVisible ? 'none' : 'block';
-        }
-
-        function authenticateAdmin() {
-            const password = document.getElementById('adminPassword').value;
-            if (password === ADMIN_PASSWORD) {
-                isAdminAuthenticated = true;
-                const loginBtn = document.getElementById('adminLoginBtn');
-                loginBtn.textContent = '✅ ورود موفق';
-                loginBtn.className += ' admin-success';
-                
-                document.getElementById('adminExportBtn').style.display = 'block';
-                document.getElementById('clearDataBtn').style.display = 'block';
-                showMessage('✅ ورود مدیریت با موفقیت انجام شد', 'success');
-            } else {
-                showMessage('❌ رمز عبور نادرست', 'error');
-            }
-        }
-
-        // راه‌اندازی اولیه
-        document.addEventListener('DOMContentLoaded', function() {
-            setTodayDate();
-            checkWorkerStatus();
-
-            // Event listeners
-            document.getElementById('viewDataBtn').addEventListener('click', viewData);
-            document.getElementById('scannerBtn').addEventListener('click', function() {
-                document.getElementById('scannerModal').style.display = 'flex';
-                setTimeout(initScanner, 100); // Small delay to ensure modal is visible
-            });
-            document.getElementById('closeScanner').addEventListener('click', closeScanner);
-            document.getElementById('stopScanner').addEventListener('click', closeScanner);
-            document.getElementById('adminToggle').addEventListener('click', toggleAdminPanel);
-            document.getElementById('adminLoginBtn').addEventListener('click', authenticateAdmin);
-            document.getElementById('adminExportBtn').addEventListener('click', exportData);
-            document.getElementById('clearDataBtn').addEventListener('click', clearData);
-
-            // Enter key for admin password
-            document.getElementById('adminPassword').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    authenticateAdmin();
-                }
-            });
-        });
-
-        // مدیریت فرم ثبت فروش
+        // Form Submit
         document.getElementById('salesForm').addEventListener('submit', async function(event) {
             event.preventDefault();
             const form = event.target;
@@ -848,7 +1096,6 @@
             const messageDiv = document.getElementById('responseMessage');
             
             messageDiv.style.display = 'none';
-            messageDiv.className = 'message';
             
             submitButton.disabled = true;
             submitButton.textContent = '🔄 در حال ثبت...';
@@ -858,13 +1105,13 @@
             
             if (!sellerId) {
                 showMessage('❌ کد فروشنده الزامی است', 'error');
-                resetButton();
+                resetSubmitButton();
                 return;
             }
             
             if (!imei || imei.length !== 15 || !/^\d{15}$/.test(imei)) {
                 showMessage('❌ شماره IMEI باید دقیقاً 15 رقم باشد', 'error');
-                resetButton();
+                resetSubmitButton();
                 return;
             }
 
@@ -899,7 +1146,7 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    showMessage(`✅ ثبت موفق: ${result.message}`, 'success');
+                    showMessage(`✅ ${result.message}`, 'success');
                     form.reset();
                     form.sellerId.value = sellerId; 
                     setTodayDate();
@@ -911,29 +1158,58 @@
                 console.error('Submit error:', error);
                 showMessage(`❌ خطای شبکه: ${error.message}`, 'error');
             } finally {
-                resetButton();
+                resetSubmitButton();
             }
         });
 
-        function showMessage(text, type) {
-            const messageDiv = document.getElementById('responseMessage');
-            messageDiv.className = `message ${type}`;
-            messageDiv.innerHTML = text;
-            messageDiv.style.display = 'block';
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            setTodayDate();
+            checkWorkerStatus();
 
-            // Auto-hide success messages
-            if (type === 'success') {
-                setTimeout(() => {
-                    messageDiv.style.display = 'none';
-                }, 5000);
-            }
-        }
-
-        function resetButton() {
-            const submitButton = document.getElementById('submitButton');
-            submitButton.disabled = false;
-            submitButton.textButton.textContent = '✨ ثبت فروش';
-        }
+            // Admin dropdown
+            document.getElementById('adminToggle').addEventListener('click', toggleAdminDropdown);
+            
+            // Admin actions
+            document.getElementById('viewDataBtn').addEventListener('click', viewData);
+            document.getElementById('adminExportBtn').addEventListener('click', exportData);
+            document.getElementById('clearDataBtn').addEventListener('click', showConfirmModal);
+            document.getElementById('adminLoginBtn').addEventListener('click', showPasswordModal);
+            document.getElementById('adminLogoutBtn').addEventListener('click', logoutAdmin);
+            
+            // Password modal
+            document.getElementById('submitPassword').addEventListener('click', authenticateAdmin);
+            document.getElementById('cancelPassword').addEventListener('click', hidePasswordModal);
+            document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    authenticateAdmin();
+                }
+            });
+            
+            // Confirm modal
+            document.getElementById('confirmDelete').addEventListener('click', clearData);
+            document.getElementById('cancelDelete').addEventListener('click', hideConfirmModal);
+            
+            // Scanner
+            document.getElementById('scannerBtn').addEventListener('click', function() {
+                document.getElementById('scannerModal').style.display = 'flex';
+                setTimeout(initScanner, 100);
+            });
+            document.getElementById('closeScanner').addEventListener('click', closeScanner);
+            document.getElementById('stopScanner').addEventListener('click', closeScanner);
+            
+            // Data modal
+            document.getElementById('closeDataModal').addEventListener('click', function() {
+                document.getElementById('dataModal').style.display = 'none';
+            });
+            
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.admin-menu')) {
+                    document.getElementById('adminDropdown').classList.remove('show');
+                }
+            });
+        });
     </script>
 </body>
 </html>
