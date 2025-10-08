@@ -13,10 +13,9 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
-            background: linear-gradient(135deg, #0a0a23 0%, #1a1a3a 30%, #000015 100%);
+            background: #0a0e23;
             color: #ffffff;
             min-height: 100vh;
-            position: relative;
             overflow-x: hidden;
         }
 
@@ -28,80 +27,60 @@
             width: 100vw;
             height: 100vh;
             z-index: -1;
+            background: linear-gradient(135deg, #0a0e23 0%, #1a1f3a 30%, #0f0f2a 70%, #000015 100%);
         }
 
-        /* Top Navigation Bar */
-        .top-nav {
+        /* Top Admin Icon (Right Side) */
+        .admin-icon {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: rgba(16, 16, 35, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1000;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .logo {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #4fc3f7;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .admin-menu {
-            position: relative;
-        }
-
-        .admin-toggle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
             background: linear-gradient(135deg, #6c5ce7, #a29bfe);
             border: none;
+            border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 1.2rem;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(108, 92, 231, 0.4);
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
         }
 
-        .admin-toggle:hover {
+        .admin-icon:hover {
             transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.5);
+            box-shadow: 0 6px 25px rgba(108, 92, 231, 0.6);
         }
 
+        .admin-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        /* Admin Dropdown Menu */
         .admin-dropdown {
-            position: absolute;
-            top: 50px;
-            right: 0;
+            position: fixed;
+            top: 80px;
+            right: 20px;
             background: rgba(16, 16, 35, 0.95);
             backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            min-width: 200px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            min-width: 220px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
             display: none;
             z-index: 1001;
         }
 
         .admin-dropdown.show {
             display: block;
-            animation: slideIn 0.3s ease;
+            animation: slideInDown 0.3s ease;
         }
 
-        @keyframes slideIn {
+        @keyframes slideInDown {
             from {
                 opacity: 0;
                 transform: translateY(-10px);
@@ -114,7 +93,7 @@
 
         .admin-dropdown button {
             width: 100%;
-            padding: 12px 16px;
+            padding: 14px 18px;
             background: transparent;
             border: none;
             color: #ffffff;
@@ -124,12 +103,13 @@
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            gap: 8px;
+            gap: 10px;
             font-size: 0.9rem;
+            font-weight: 500;
         }
 
         .admin-dropdown button:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(108, 92, 231, 0.2);
         }
 
         .admin-dropdown button:first-child {
@@ -140,16 +120,26 @@
             border-radius: 0 0 12px 12px;
         }
 
+        .admin-only {
+            display: none;
+        }
+
+        .admin-authenticated .admin-only {
+            display: block;
+        }
+
         /* Main Container */
         .container {
             max-width: 800px;
-            margin: 80px auto 20px;
+            margin: 100px auto 40px;
             padding: 20px;
+            z-index: 10;
+            position: relative;
         }
 
         /* Status Card */
         .status-card {
-            background: rgba(45, 45, 57, 0.8);
+            background: rgba(45, 45, 57, 0.9);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
             padding: 20px;
@@ -157,16 +147,19 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
             text-align: center;
+            font-weight: 500;
         }
 
         .status-online {
             background: rgba(16, 185, 129, 0.2);
-            border-color: rgba(16, 185, 129, 0.3);
+            border-color: rgba(16, 185, 129, 0.4);
+            color: #10b981;
         }
 
         .status-offline {
             background: rgba(239, 68, 68, 0.2);
-            border-color: rgba(239, 68, 68, 0.3);
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #ef4444;
         }
 
         /* Main Form Card */
@@ -175,10 +168,9 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(15px);
             position: relative;
-            overflow: hidden;
         }
 
         .form-card::before {
@@ -187,8 +179,9 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 2px;
+            height: 3px;
             background: linear-gradient(90deg, #4fc3f7, #6c5ce7, #a29bfe);
+            border-radius: 20px 20px 0 0;
         }
 
         .form-title {
@@ -201,7 +194,7 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* Form Groups */
+        /* Form styling */
         .form-group {
             margin-bottom: 20px;
         }
@@ -211,7 +204,7 @@
             margin-bottom: 8px;
             font-weight: 500;
             color: #b8b8d1;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
 
         .input-container {
@@ -223,29 +216,29 @@
         .form-input {
             width: 100%;
             padding: 15px 20px;
-            background: rgba(224, 224, 230, 0.1);
+            background: rgba(224, 224, 230, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            color: #ffffff;
+            color: #1f2937;
             font-size: 1rem;
+            font-weight: 500;
             transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
         }
 
         .form-input:focus {
             outline: none;
             border-color: #4fc3f7;
             box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.2);
-            background: rgba(224, 224, 230, 0.15);
+            background: rgba(255, 255, 255, 0.98);
         }
 
         .form-input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(31, 41, 55, 0.6);
         }
 
         /* IMEI Input with Scanner */
         .imei-input {
-            padding-left: 50px;
+            padding-left: 55px;
         }
 
         .scanner-icon {
@@ -256,23 +249,26 @@
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 10;
+            background: linear-gradient(135deg, #10b981, #059669);
+            padding: 8px;
+            border-radius: 8px;
         }
 
         .scanner-icon:hover {
             transform: translateY(-50%) scale(1.1);
+            background: linear-gradient(135deg, #059669, #047857);
         }
 
-        /* Barcode SVG Icon */
-        .barcode-icon {
-            width: 24px;
-            height: 24px;
-            fill: #4fc3f7;
+        .scanner-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
         }
 
         /* Submit Button */
         .submit-btn {
             width: 100%;
-            padding: 16px;
+            padding: 18px;
             background: linear-gradient(135deg, #6c5ce7, #a29bfe);
             border: none;
             border-radius: 12px;
@@ -282,16 +278,16 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-top: 20px;
-            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
         }
 
         .submit-btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.5);
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.6);
         }
 
         .submit-btn:disabled {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(100, 100, 100, 0.5);
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
@@ -304,24 +300,99 @@
             border-radius: 12px;
             font-weight: 500;
             text-align: center;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .message.success {
             background: rgba(16, 185, 129, 0.2);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            border: 1px solid rgba(16, 185, 129, 0.4);
             color: #10b981;
         }
 
         .message.error {
             background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            border: 1px solid rgba(239, 68, 68, 0.4);
             color: #ef4444;
+        }
+
+        /* Data Table Modal */
+        .data-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .data-content {
+            background: rgba(16, 16, 35, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 95vw;
+            max-height: 90vh;
+            width: 1000px;
+            position: relative;
+            backdrop-filter: blur(15px);
+            overflow: hidden;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #ffffff;
+            background: none;
+            border: none;
+            padding: 5px;
+        }
+
+        .close-modal:hover {
+            color: #ef4444;
+        }
+
+        .data-table-container {
+            max-height: 70vh;
+            overflow: auto;
+            margin-top: 20px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            background: rgba(35, 35, 62, 0.6);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .data-table th {
+            background: rgba(108, 92, 231, 0.3);
+            font-weight: 600;
+            color: #4fc3f7;
+            position: sticky;
+            top: 0;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .data-table tr:hover {
+            background: rgba(108, 92, 231, 0.2);
         }
 
         /* Scanner Modal */
@@ -339,8 +410,8 @@
         }
 
         .scanner-content {
-            background: rgba(16, 16, 35, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(16, 16, 35, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 20px;
             padding: 30px;
             max-width: 500px;
@@ -350,88 +421,12 @@
             backdrop-filter: blur(15px);
         }
 
-        .close-scanner {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 24px;
-            cursor: pointer;
-            color: #ffffff;
-            transition: color 0.3s ease;
-        }
-
-        .close-scanner:hover {
-            color: #ef4444;
-        }
-
         #scanner-video {
             width: 100%;
             max-width: 400px;
             height: auto;
             border-radius: 12px;
             margin: 20px 0;
-        }
-
-        /* Data Table Modal */
-        .data-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .data-content {
-            background: rgba(16, 16, 35, 0.98);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 95vw;
-            max-height: 90vh;
-            width: 1000px;
-            position: relative;
-            backdrop-filter: blur(15px);
-            overflow: hidden;
-        }
-
-        .data-table-container {
-            max-height: 70vh;
-            overflow: auto;
-            margin-top: 20px;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
-
-        .data-table th,
-        .data-table td {
-            padding: 12px 8px;
-            text-align: right;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .data-table th {
-            background: rgba(108, 92, 231, 0.2);
-            font-weight: 600;
-            color: #4fc3f7;
-            position: sticky;
-            top: 0;
-        }
-
-        .data-table tr:nth-child(even) {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .data-table tr:hover {
-            background: rgba(108, 92, 231, 0.1);
         }
 
         /* Confirmation Modal */
@@ -450,7 +445,7 @@
 
         .confirm-content {
             background: rgba(16, 16, 35, 0.98);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 16px;
             padding: 30px;
             max-width: 400px;
@@ -468,7 +463,7 @@
 
         .btn-confirm,
         .btn-cancel {
-            padding: 10px 20px;
+            padding: 12px 20px;
             border: none;
             border-radius: 8px;
             font-weight: 500;
@@ -482,19 +477,19 @@
         }
 
         .btn-cancel {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.2);
             color: #ffffff;
         }
 
         .btn-confirm:hover,
         .btn-cancel:hover {
-            transform: translateY(-1px);
+            transform: translateY(-2px);
         }
 
         /* Responsive */
         @media (max-width: 768px) {
             .container {
-                margin: 70px 10px 20px;
+                margin: 80px 10px 20px;
                 padding: 15px;
             }
 
@@ -506,17 +501,22 @@
                 font-size: 1.5rem;
             }
 
-            .top-nav {
-                padding: 0 15px;
+            .admin-icon {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
             }
 
-            .logo {
-                font-size: 1rem;
+            .admin-dropdown {
+                top: 70px;
+                right: 15px;
+                min-width: 200px;
             }
 
             .data-content {
                 padding: 20px;
-                max-width: 95vw;
+                width: 95vw;
             }
 
             .data-table {
@@ -525,62 +525,39 @@
 
             .data-table th,
             .data-table td {
-                padding: 8px 4px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .form-input {
-                padding: 12px 16px;
-                font-size: 0.9rem;
-            }
-
-            .imei-input {
-                padding-left: 45px;
-            }
-
-            .scanner-icon {
-                left: 12px;
-            }
-
-            .barcode-icon {
-                width: 20px;
-                height: 20px;
+                padding: 8px 5px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Starfield Canvas Background -->
+    <!-- Galaxy Starfield Canvas -->
     <canvas id="starfield"></canvas>
 
-    <!-- Top Navigation -->
-    <div class="top-nav">
-        <div class="logo">
-            🏆 سامانه مدیریت فروش Honor
-        </div>
-        <div class="admin-menu">
-            <button class="admin-toggle" id="adminToggle">
-                👤
-            </button>
-            <div class="admin-dropdown" id="adminDropdown">
-                <button id="viewDataBtn">
-                    📋 مشاهده داده‌ها
-                </button>
-                <button id="adminExportBtn" style="display: none;">
-                    📁 دانلود مدیریت
-                </button>
-                <button id="clearDataBtn" style="display: none;">
-                    🗑️ پاک کردن داده‌ها
-                </button>
-                <button id="adminLoginBtn">
-                    🔐 ورود مدیریت
-                </button>
-                <button id="adminLogoutBtn" style="display: none;">
-                    🚪 خروج
-                </button>
-            </div>
-        </div>
+    <!-- Admin Icon (Right Side) -->
+    <button class="admin-icon" id="adminIcon" title="پنل مدیریت">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L12 2L3 7V9C3 14.55 6.84 19.74 12 21C17.16 19.74 21 14.55 21 9Z"/>
+        </svg>
+    </button>
+
+    <!-- Admin Dropdown Menu -->
+    <div class="admin-dropdown" id="adminDropdown">
+        <button id="adminLoginBtn">
+            🔐 ورود مدیریت
+        </button>
+        <button id="viewDataBtn" class="admin-only">
+            📋 مشاهده جدول داده‌ها
+        </button>
+        <button id="exportDataBtn" class="admin-only">
+            📁 دانلود فایل CSV
+        </button>
+        <button id="clearDataBtn" class="admin-only">
+            🗑️ حذف تمام داده‌ها
+        </button>
+        <button id="logoutBtn" class="admin-only">
+            🚪 خروج از مدیریت
+        </button>
     </div>
 
     <div class="container">
@@ -602,21 +579,17 @@
                 <div class="form-group">
                     <label class="form-label" for="imei">🔢 شماره IMEI:</label>
                     <div class="input-container">
-                        <input type="text" id="imei" name="imei" class="form-input imei-input" required maxlength="15" minlength="15" placeholder="شماره IMEI را وارد یا اسکن کنید">
+                        <input type="text" id="imei" name="imei" class="form-input imei-input" required maxlength="15" minlength="15" placeholder="سریال IMEI را وارد یا اسکن کنید">
                         <div class="scanner-icon" id="scannerBtn" title="اسکن بارکد IMEI">
-                            <svg class="barcode-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M2 6C2 4.89543 2.89543 4 4 4H6C7.10457 4 8 4.89543 8 6V8C8 9.10457 7.10457 10 6 10H4C2.89543 10 2 9.10457 2 8V6Z" fill="currentColor"/>
-                                <path d="M2 16C2 14.8954 2.89543 14 4 14H6C7.10457 14 8 14.8954 8 16V18C8 19.1046 7.10457 20 6 20H4C2.89543 20 2 19.1046 2 18V16Z" fill="currentColor"/>
-                                <path d="M14 4H16C17.1046 4 18 4.89543 18 6V8C18 9.10457 17.1046 10 16 10H14C12.8954 10 12 9.10457 12 8V6C12 4.89543 12.8954 4 14 4Z" fill="currentColor"/>
-                                <path d="M12 16C12 14.8954 12.8954 14 14 14H16C17.1046 14 18 14.8954 18 16V18C18 19.1046 17.1046 20 16 20H14C12.8954 20 12 19.1046 12 18V16Z" fill="currentColor"/>
-                                <path d="M20 6C20 4.89543 20.8954 4 22 4C23.1046 4 24 4.89543 24 6V18C24 19.1046 23.1046 20 22 20C20.8954 20 20 19.1046 20 18V6Z" fill="currentColor"/>
-                                <path d="M1 2H3V4H1V2Z" fill="currentColor"/>
-                                <path d="M1 20H3V22H1V20Z" fill="currentColor"/>
-                                <path d="M21 2H23V4H21V2Z" fill="currentColor"/>
-                                <path d="M21 20H23V22H21V20Z" fill="currentColor"/>
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M2 6h2v12H2V6zm4-2h2v16H6V4zm4-2h2v16h-2V2zm4 2h2v12h-2V6zm4-2h2v16h-2V4z"/>
+                                <path d="M1 1h4v4H1V1zm18 0h4v4h-4V1zM1 19h4v4H1v-4zm18 0h4v4h-4v-4z"/>
                             </svg>
                         </div>
                     </div>
+                    <small style="color: #4fc3f7; font-size: 0.85rem; margin-top: 5px; display: block;">
+                        💡 اگر اسکن موفق نشد، سریال را دستی وارد کنید
+                    </small>
                 </div>
 
                 <div class="form-group">
@@ -648,22 +621,11 @@
         </div>
     </div>
 
-    <!-- Scanner Modal -->
-    <div class="scanner-modal" id="scannerModal">
-        <div class="scanner-content">
-            <span class="close-scanner" id="closeScanner">&times;</span>
-            <h3>📷 اسکن بارکد IMEI</h3>
-            <video id="scanner-video" autoplay></video>
-            <p>بارکد IMEI را جلوی دوربین قرار دهید</p>
-            <button class="btn-cancel" id="stopScanner">توقف اسکن</button>
-        </div>
-    </div>
-
     <!-- Data Table Modal -->
     <div class="data-modal" id="dataModal">
         <div class="data-content">
-            <span class="close-scanner" id="closeDataModal">&times;</span>
-            <h3>📊 داده‌های فروش Honor</h3>
+            <button class="close-modal" id="closeDataModal">&times;</button>
+            <h3>📊 جدول اطلاعات فروش Honor</h3>
             <div class="data-table-container">
                 <table class="data-table" id="dataTable">
                     <thead>
@@ -685,6 +647,17 @@
         </div>
     </div>
 
+    <!-- Scanner Modal -->
+    <div class="scanner-modal" id="scannerModal">
+        <div class="scanner-content">
+            <button class="close-modal" id="closeScanner">&times;</button>
+            <h3>📷 اسکن بارکد IMEI</h3>
+            <video id="scanner-video" autoplay></video>
+            <p>بارکد IMEI را جلوی دوربین قرار دهید</p>
+            <button class="btn-cancel" id="stopScanner">توقف اسکن</button>
+        </div>
+    </div>
+
     <!-- Admin Password Modal -->
     <div class="confirm-modal" id="passwordModal">
         <div class="confirm-content">
@@ -698,7 +671,7 @@
         </div>
     </div>
 
-    <!-- Confirmation Modal -->
+    <!-- Delete Confirmation Modal -->
     <div class="confirm-modal" id="confirmModal">
         <div class="confirm-content">
             <h3>⚠️ تایید حذف</h3>
@@ -719,20 +692,23 @@
         const ADMIN_PASSWORD = 'Honor2025Admin!';
         let isAdminAuthenticated = false;
 
-        // Starfield Animation
-        class StarField {
-            constructor(canvasId, numStars = 200) {
+        // Enhanced Starfield Animation
+        class GalaxyStarField {
+            constructor(canvasId) {
                 this.canvas = document.getElementById(canvasId);
                 this.ctx = this.canvas.getContext('2d');
-                this.numStars = numStars;
                 this.stars = [];
+                this.numStars = 800;
                 this.animationId = null;
                 
                 this.resizeCanvas();
                 this.createStars();
                 this.animate();
                 
-                window.addEventListener('resize', () => this.resizeCanvas());
+                window.addEventListener('resize', () => {
+                    this.resizeCanvas();
+                    this.createStars();
+                });
             }
             
             resizeCanvas() {
@@ -746,51 +722,61 @@
                     this.stars.push({
                         x: Math.random() * this.canvas.width,
                         y: Math.random() * this.canvas.height,
-                        radius: Math.random() * 2 + 0.5,
-                        alpha: Math.random() * 0.8 + 0.2,
-                        twinkle: Math.random() * 0.02 + 0.01,
-                        twinkleDirection: 1
+                        size: Math.random() * 3 + 0.5,
+                        opacity: Math.random() * 0.8 + 0.2,
+                        twinkleSpeed: Math.random() * 0.03 + 0.01,
+                        twinkleDirection: 1,
+                        color: this.getStarColor()
                     });
                 }
             }
             
+            getStarColor() {
+                const colors = [
+                    { r: 255, g: 255, b: 255 }, // white
+                    { r: 79, g: 195, b: 247 }, // cyan
+                    { r: 162, g: 155, b: 254 }, // purple
+                    { r: 16, g: 185, b: 129 }, // green
+                ];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+            
             animate() {
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                // Clear with gradient background
+                const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+                gradient.addColorStop(0, '#0a0e23');
+                gradient.addColorStop(0.3, '#1a1f3a');
+                gradient.addColorStop(0.7, '#0f0f2a');
+                gradient.addColorStop(1, '#000015');
+                
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 
                 this.stars.forEach(star => {
                     // Twinkling effect
-                    star.alpha += star.twinkle * star.twinkleDirection;
-                    if (star.alpha >= 1 || star.alpha <= 0.2) {
+                    star.opacity += star.twinkleSpeed * star.twinkleDirection;
+                    if (star.opacity >= 1 || star.opacity <= 0.1) {
                         star.twinkleDirection *= -1;
                     }
                     
-                    // Draw star
+                    // Draw star with glow
+                    this.ctx.save();
+                    this.ctx.globalAlpha = star.opacity;
                     this.ctx.beginPath();
-                    this.ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-                    this.ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+                    this.ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                    this.ctx.fillStyle = `rgb(${star.color.r}, ${star.color.g}, ${star.color.b})`;
+                    this.ctx.shadowColor = `rgb(${star.color.r}, ${star.color.g}, ${star.color.b})`;
+                    this.ctx.shadowBlur = star.size * 3;
                     this.ctx.fill();
-                    
-                    // Add some colored stars
-                    if (Math.random() < 0.1) {
-                        this.ctx.shadowColor = Math.random() < 0.5 ? '#4fc3f7' : '#a29bfe';
-                        this.ctx.shadowBlur = star.radius * 2;
-                        this.ctx.fill();
-                        this.ctx.shadowBlur = 0;
-                    }
+                    this.ctx.restore();
                 });
                 
                 this.animationId = requestAnimationFrame(() => this.animate());
             }
-            
-            destroy() {
-                if (this.animationId) {
-                    cancelAnimationFrame(this.animationId);
-                }
-            }
         }
 
         // Initialize starfield
-        const starField = new StarField('starfield');
+        const starField = new GalaxyStarField('starfield');
 
         // Utility Functions
         function setTodayDate() {
@@ -863,12 +849,10 @@
             const password = document.getElementById('adminPassword').value;
             if (password === ADMIN_PASSWORD) {
                 isAdminAuthenticated = true;
-                document.getElementById('adminExportBtn').style.display = 'block';
-                document.getElementById('clearDataBtn').style.display = 'block';
-                document.getElementById('adminLoginBtn').style.display = 'none';
-                document.getElementById('adminLogoutBtn').style.display = 'block';
+                document.body.classList.add('admin-authenticated');
                 hidePasswordModal();
                 showMessage('✅ ورود مدیریت با موفقیت انجام شد', 'success');
+                document.getElementById('adminDropdown').classList.remove('show');
             } else {
                 showMessage('❌ رمز عبور نادرست', 'error');
             }
@@ -876,21 +860,30 @@
 
         function logoutAdmin() {
             isAdminAuthenticated = false;
-            document.getElementById('adminExportBtn').style.display = 'none';
-            document.getElementById('clearDataBtn').style.display = 'none';
-            document.getElementById('adminLoginBtn').style.display = 'block';
-            document.getElementById('adminLogoutBtn').style.display = 'none';
+            document.body.classList.remove('admin-authenticated');
             document.getElementById('adminDropdown').classList.remove('show');
             showMessage('🚪 خروج از پنل مدیریت', 'success');
         }
 
         // Data Functions
         async function viewData() {
+            if (!isAdminAuthenticated) {
+                showMessage('⚠️ ابتدا وارد پنل مدیریت شوید', 'error');
+                return;
+            }
+
             try {
-                const response = await fetch(`${WORKER_BASE_URL}/api/sales/data`);
+                const response = await fetch(`${WORKER_BASE_URL}/api/sales/data`, {
+                    headers: {
+                        'X-Admin-Password': ADMIN_PASSWORD
+                    }
+                });
+                
                 if (response.ok) {
                     const data = await response.json();
                     displayDataTable(data.data || []);
+                } else if (response.status === 401) {
+                    showMessage('❌ دسترسی غیرمجاز', 'error');
                 } else {
                     showMessage('❌ خطا در بازیابی داده‌ها', 'error');
                 }
@@ -904,19 +897,19 @@
             tableBody.innerHTML = '';
             
             if (data.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;">هیچ داده‌ای یافت نشد</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="8" style="padding: 40px; color: #64748b;">هیچ داده‌ای یافت نشد</td></tr>';
             } else {
-                data.forEach(item => {
+                data.forEach((item, index) => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${item.id || '-'}</td>
+                        <td>${index + 1}</td>
                         <td>${item.seller_id || '-'}</td>
                         <td>${item.imei || '-'}</td>
                         <td>${item.phone_model || '-'}</td>
                         <td>${item.sale_date || '-'}</td>
                         <td>${item.city || '-'}</td>
                         <td>${item.phone_number || '-'}</td>
-                        <td>${new Date(item.created_at).toLocaleString('fa-IR') || '-'}</td>
+                        <td>${new Date(item.created_at).toLocaleDateString('fa-IR') || '-'}</td>
                     `;
                     tableBody.appendChild(row);
                 });
@@ -927,14 +920,16 @@
 
         async function exportData() {
             if (!isAdminAuthenticated) {
-                showMessage('⚠️ این عملکرد فقط برای مدیران در دسترس است', 'error');
+                showMessage('⚠️ ابتدا وارد پنل مدیریت شوید', 'error');
                 return;
             }
             
             try {
-                const response = await fetch(`${WORKER_BASE_URL}/api/sales/export`, {
+                const response = await fetch(`${WORKER_BASE_URL}/api/admin/export`, {
+                    method: 'GET',
                     headers: {
-                        'X-Admin-Password': ADMIN_PASSWORD
+                        'X-Admin-Password': ADMIN_PASSWORD,
+                        'Accept': 'text/csv'
                     }
                 });
                 
@@ -949,18 +944,23 @@
                     a.click();
                     window.URL.revokeObjectURL(url);
                     document.body.removeChild(a);
-                    showMessage('✅ خروجی با موفقیت دانلود شد', 'success');
+                    showMessage('✅ فایل با موفقیت دانلود شد', 'success');
                 } else if (response.status === 401) {
                     showMessage('❌ دسترسی غیرمجاز', 'error');
                 } else {
                     showMessage('❌ خطا در دانلود فایل', 'error');
                 }
             } catch (error) {
+                console.error('Export error:', error);
                 showMessage('❌ خطا در ارتباط با سرور', 'error');
             }
         }
 
         function showConfirmModal() {
+            if (!isAdminAuthenticated) {
+                showMessage('⚠️ ابتدا وارد پنل مدیریت شوید', 'error');
+                return;
+            }
             document.getElementById('confirmModal').style.display = 'flex';
         }
 
@@ -969,11 +969,6 @@
         }
 
         async function clearData() {
-            if (!isAdminAuthenticated) {
-                showMessage('⚠️ این عملکرد فقط برای مدیران در دسترس است', 'error');
-                return;
-            }
-            
             try {
                 const response = await fetch(`${WORKER_BASE_URL}/api/admin/clear`, {
                     method: 'DELETE',
@@ -1003,54 +998,68 @@
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 navigator.mediaDevices.getUserMedia({ 
                     video: { 
-                        facingMode: 'environment'
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
                     } 
                 })
                 .then(function(stream) {
                     video.srcObject = stream;
                     
-                    Quagga.init({
-                        inputStream: {
-                            name: "Live",
-                            type: "LiveStream",
-                            target: video,
-                            constraints: {
-                                width: 480,
-                                height: 320,
-                                facingMode: "environment"
+                    // Use html5-qrcode for better mobile scanning
+                    if (typeof Quagga !== 'undefined') {
+                        Quagga.init({
+                            inputStream: {
+                                name: "Live",
+                                type: "LiveStream",
+                                target: video,
+                                constraints: {
+                                    width: { min: 640, ideal: 1280 },
+                                    height: { min: 480, ideal: 720 },
+                                    facingMode: "environment"
+                                }
+                            },
+                            locator: {
+                                patchSize: "medium",
+                                halfSample: false
+                            },
+                            decoder: {
+                                readers: [
+                                    'code_128_reader',
+                                    'ean_reader', 
+                                    'ean_8_reader',
+                                    'code_39_reader',
+                                    'code_93_reader',
+                                    'codabar_reader'
+                                ]
+                            },
+                            locate: true
+                        }, function(err) {
+                            if (err) {
+                                console.log('Quagga init error:', err);
+                                showMessage('❌ خطا در راه‌اندازی اسکنر', 'error');
+                                return;
                             }
-                        },
-                        decoder: {
-                            readers: ['code_128_reader', 'ean_reader', 'ean_8_reader', 'code_39_reader']
-                        }
-                    }, function(err) {
-                        if (err) {
-                            console.log(err);
-                            return;
-                        }
-                        Quagga.start();
-                    });
+                            Quagga.start();
+                        });
 
-                    Quagga.onDetected(function(data) {
-                        const code = data.codeResult.code;
-                        console.log('Detected barcode:', code);
-                        
-                        let imei = extractIMEIFromBarcode(code);
-                        
-                        if (imei && imei.length === 15) {
-                            document.getElementById('imei').value = imei;
-                            closeScanner();
-                            showMessage('✅ شماره IMEI با موفقیت اسکن شد!', 'success');
-                        } else if (code.length === 15 && /^\d{15}$/.test(code)) {
-                            document.getElementById('imei').value = code;
-                            closeScanner();
-                            showMessage('✅ شماره IMEI با موفقیت اسکن شد!', 'success');
-                        }
-                    });
+                        Quagga.onDetected(function(data) {
+                            const code = data.codeResult.code;
+                            console.log('Detected barcode:', code);
+                            
+                            let imei = extractIMEIFromBarcode(code);
+                            
+                            if (imei && imei.length === 15) {
+                                document.getElementById('imei').value = imei;
+                                closeScanner();
+                                showMessage('✅ شماره IMEI با موفقیت اسکن شد!', 'success');
+                            }
+                        });
+                    }
                 })
                 .catch(function(error) {
-                    console.log('Error accessing camera: ', error);
-                    showMessage('❌ خطا در دسترسی به دوربین', 'error');
+                    console.log('Camera error:', error);
+                    showMessage('❌ خطا در دسترسی به دوربین. لطفاً اجازه دسترسی بدهید.', 'error');
                 });
             } else {
                 showMessage('❌ مرورگر شما از دوربین پشتیبانی نمی‌کند', 'error');
@@ -1058,8 +1067,9 @@
         }
 
         function extractIMEIFromBarcode(barcode) {
+            // Handle different barcode formats for IMEI
             if (barcode.includes('IMEI')) {
-                const match = barcode.match(/IMEI\s*[1:]?\s*([0-9]{15})/);
+                const match = barcode.match(/IMEI\s*[1:]?\s*([0-9]{15})/i);
                 return match ? match[1] : null;
             } else if (/^\d{15}$/.test(barcode)) {
                 return barcode;
@@ -1088,14 +1098,11 @@
             }
         }
 
-        // Form Submit
+        // Form Submit Handler
         document.getElementById('salesForm').addEventListener('submit', async function(event) {
             event.preventDefault();
             const form = event.target;
             const submitButton = document.getElementById('submitButton');
-            const messageDiv = document.getElementById('responseMessage');
-            
-            messageDiv.style.display = 'none';
             
             submitButton.disabled = true;
             submitButton.textContent = '🔄 در حال ثبت...';
@@ -1135,14 +1142,9 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    throw new Error(`HTTP ${response.status}`);
                 }
                 
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    throw new Error('پاسخ سرور به فرمت JSON نیست');
-                }
-
                 const result = await response.json();
 
                 if (result.success) {
@@ -1151,7 +1153,7 @@
                     form.sellerId.value = sellerId; 
                     setTodayDate();
                 } else {
-                    showMessage(`❌ خطا: ${result.message || 'مشکل نامشخص'}`, 'error');
+                    showMessage(`❌ خطا: ${result.message}`, 'error');
                 }
                 
             } catch (error) {
@@ -1167,17 +1169,11 @@
             setTodayDate();
             checkWorkerStatus();
 
-            // Admin dropdown
-            document.getElementById('adminToggle').addEventListener('click', toggleAdminDropdown);
+            // Admin dropdown toggle
+            document.getElementById('adminIcon').addEventListener('click', toggleAdminDropdown);
             
-            // Admin actions
-            document.getElementById('viewDataBtn').addEventListener('click', viewData);
-            document.getElementById('adminExportBtn').addEventListener('click', exportData);
-            document.getElementById('clearDataBtn').addEventListener('click', showConfirmModal);
+            // Admin login
             document.getElementById('adminLoginBtn').addEventListener('click', showPasswordModal);
-            document.getElementById('adminLogoutBtn').addEventListener('click', logoutAdmin);
-            
-            // Password modal
             document.getElementById('submitPassword').addEventListener('click', authenticateAdmin);
             document.getElementById('cancelPassword').addEventListener('click', hidePasswordModal);
             document.getElementById('adminPassword').addEventListener('keypress', function(e) {
@@ -1185,6 +1181,12 @@
                     authenticateAdmin();
                 }
             });
+            
+            // Admin actions
+            document.getElementById('viewDataBtn').addEventListener('click', viewData);
+            document.getElementById('exportDataBtn').addEventListener('click', exportData);
+            document.getElementById('clearDataBtn').addEventListener('click', showConfirmModal);
+            document.getElementById('logoutBtn').addEventListener('click', logoutAdmin);
             
             // Confirm modal
             document.getElementById('confirmDelete').addEventListener('click', clearData);
@@ -1205,8 +1207,18 @@
             
             // Close dropdowns when clicking outside
             document.addEventListener('click', function(event) {
-                if (!event.target.closest('.admin-menu')) {
+                if (!event.target.closest('.admin-icon') && !event.target.closest('.admin-dropdown')) {
                     document.getElementById('adminDropdown').classList.remove('show');
+                }
+            });
+
+            // Close modals with escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    hidePasswordModal();
+                    hideConfirmModal();
+                    closeScanner();
+                    document.getElementById('dataModal').style.display = 'none';
                 }
             });
         });
