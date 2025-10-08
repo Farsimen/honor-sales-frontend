@@ -691,7 +691,8 @@
         const WORKER_BASE_URL = 'https://honor-sales-worker.farsimen.workers.dev';
         const ADMIN_PASSWORD = 'Honor2025Admin!';
         let isAdminAuthenticated = false;
-
+        if(localStorage.getItem('adminToken')) isAdmin = true; // این خط
+        
         // Enhanced Starfield Animation
         class GalaxyStarField {
             constructor(canvasId) {
