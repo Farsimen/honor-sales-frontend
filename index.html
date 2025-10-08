@@ -431,6 +431,20 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
         }
+
+        .admin-success {
+            background: linear-gradient(135deg, #10b981, #059669) !important;
+        }
+
+        .scanner-instruction {
+            background: linear-gradient(135deg, #e0f2fe, #ffffff);
+            border: 1px solid #0ea5e9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #0c4a6e;
+        }
     </style>
 </head>
 <body>
@@ -451,7 +465,6 @@
             <h2>📊 پنل مدیریت داده‌ها</h2>
             <div class="dashboard-links">
                 <a href="#" id="viewDataBtn">📋 مشاهده داده‌ها</a>
-                <a href="#" id="exportDataBtn">📁 دانلود Excel</a>
                 <button class="admin-link" id="adminToggle">🔐 پنل مدیریت</button>
             </div>
 
@@ -484,6 +497,9 @@
                     <div class="input-group">
                         <input type="text" id="imei" name="imei" required maxlength="15" minlength="15" placeholder="15 رقم شماره IMEI">
                         <button type="button" class="scanner-btn" id="scannerBtn" title="اسکن بارکد">📷</button>
+                    </div>
+                    <div class="scanner-instruction">
+                        📍 برای اسکن بارکد IMEI از جعبه گوشی، روی دکمه دوربین کلیک کنید
                     </div>
                 </div>
 
@@ -575,10 +591,20 @@
                     const newWindow = window.open();
                     newWindow.document.write(`
                         <html dir="rtl">
-                        <head><title>داده‌های فروش Honor</title></head>
-                        <body style="font-family: Tahoma; padding: 20px; background: #f8fafc;">
-                            <h2>📊 داده‌های فروش (${data.count} رکورد)</h2>
-                            <pre style="background: white; padding: 20px; border-radius: 10px; direction: ltr; overflow: auto;">${JSON.stringify(data, null, 2)}</pre>
+                        <head>
+                            <title>داده‌های فروش Honor</title>
+                            <style>
+                                body { font-family: Tahoma; padding: 20px; background: #f8fafc; }
+                                .header { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+                                .data { background: white; padding: 20px; border-radius: 10px; direction: ltr; overflow: auto; white-space: pre-wrap; font-family: 'Courier New', monospace; }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="header">
+                                <h2>📊 داده‌های فروش Honor</h2>
+                                <p>تعداد کل: ${data.count} رکورد</p>
+                            </div>
+                            <div class="data">${JSON.stringify(data, null, 2)}</div>
                         </body>
                         </html>
                     `);
@@ -590,7 +616,7 @@
             }
         }
 
-        // تابع دانلود CSV (فقط برای کاربران عادی)
+        // تابع دانلود CSV (فقط برای مدیران)
         async function exportData() {
             if (!isAdminAuthenticated) {
                 alert('⚠️ این عملکرد فقط برای مدیران سیستم در دسترس است.');
@@ -598,12 +624,51 @@
             }
             
             try {
-                const response = await fetch(`${WORKER_BASE_URL}/api/sales/export`);
+                const response = await fetch(`${WORKER_BASE_URL}/api/sales/export`, {
+                    headers: {
+                        'X-Admin-Password': ADMIN_PASSWORD
+                    }
+                });
+                
                 if (response.ok) {
                     const blob = await response.blob();
                     downloadFile(blob, `honor_sales_${new Date().toISOString().split('T')[0]}.csv`);
+                } else if (response.status === 401) {
+                    alert('❌ دسترسی غیرمجاز: لطفاً ابتدا وارد شوید');
                 } else {
                     alert('❌ خطا در دانلود فایل');
+                }
+            } catch (error) {
+                alert('❌ خطا در ارتباط با سرور');
+            }
+        }
+
+        // تابع پاک کردن داده‌ها (فقط مدیر)
+        async function clearData() {
+            if (!isAdminAuthenticated) {
+                alert('⚠️ این عملکرد فقط برای مدیران سیستم در دسترس است.');
+                return;
+            }
+
+            if (!confirm('⚠️ آیا مطمئن هستید که می‌خواهید تمام داده‌ها را پاک کنید؟ این عمل غیرقابل برگشت است!')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${WORKER_BASE_URL}/api/admin/clear`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-Admin-Password': ADMIN_PASSWORD
+                    }
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(`✅ ${result.message}`);
+                } else if (response.status === 401) {
+                    alert('❌ دسترسی غیرمجاز: لطفاً ابتدا وارد شوید');
+                } else {
+                    alert('❌ خطا در پاک کردن داده‌ها');
                 }
             } catch (error) {
                 alert('❌ خطا در ارتباط با سرور');
@@ -662,17 +727,48 @@
                     // Listen for barcode detection
                     Quagga.onDetected(function(data) {
                         const code = data.codeResult.code;
-                        if (code && code.length === 15) {
+                        console.log('Detected barcode:', code);
+                        
+                        // Extract IMEI from barcode (handle different formats)
+                        let imei = extractIMEIFromBarcode(code);
+                        
+                        if (imei && imei.length === 15) {
+                            document.getElementById('imei').value = imei;
+                            closeScanner();
+                            showMessage('✅ شماره IMEI با موفقیت اسکن شد!', 'success');
+                        } else if (code.length === 15 && /^\d{15}$/.test(code)) {
+                            // Direct 15-digit IMEI
                             document.getElementById('imei').value = code;
                             closeScanner();
+                            showMessage('✅ شماره IMEI با موفقیت اسکن شد!', 'success');
                         }
                     });
                 })
                 .catch(function(error) {
                     console.log('Error accessing camera: ', error);
-                    alert('خطا در دسترسی به دوربین');
+                    alert('❌ خطا در دسترسی به دوربین. لطفاً مجوز دسترسی به دوربین را بدهید.');
                 });
+            } else {
+                alert('❌ مرورگر شما از دوربین پشتیبانی نمی‌کند.');
             }
+        }
+
+        // Extract IMEI from different barcode formats
+        function extractIMEIFromBarcode(barcode) {
+            // Handle different barcode formats
+            if (barcode.includes('IMEI')) {
+                // Format: "IMEI: 123456789012345" or "IMEI1:123456789012345"
+                const match = barcode.match(/IMEI\s*[1:]?\s*([0-9]{15})/);
+                return match ? match[1] : null;
+            } else if (/^\d{15}$/.test(barcode)) {
+                // Direct 15-digit number
+                return barcode;
+            } else if (barcode.length > 15) {
+                // Try to extract 15 consecutive digits
+                const match = barcode.match(/([0-9]{15})/);
+                return match ? match[1] : null;
+            }
+            return null;
         }
 
         function closeScanner() {
@@ -698,13 +794,18 @@
         // Admin functionality
         function toggleAdminPanel() {
             const panel = document.getElementById('adminPanel');
-            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+            const isVisible = panel.style.display !== 'none';
+            panel.style.display = isVisible ? 'none' : 'block';
         }
 
         function authenticateAdmin() {
             const password = document.getElementById('adminPassword').value;
             if (password === ADMIN_PASSWORD) {
                 isAdminAuthenticated = true;
+                const loginBtn = document.getElementById('adminLoginBtn');
+                loginBtn.textContent = '✅ ورود موفق';
+                loginBtn.className += ' admin-success';
+                
                 document.getElementById('adminExportBtn').style.display = 'block';
                 document.getElementById('clearDataBtn').style.display = 'block';
                 showMessage('✅ ورود مدیریت با موفقیت انجام شد', 'success');
@@ -720,16 +821,23 @@
 
             // Event listeners
             document.getElementById('viewDataBtn').addEventListener('click', viewData);
-            document.getElementById('exportDataBtn').addEventListener('click', exportData);
             document.getElementById('scannerBtn').addEventListener('click', function() {
                 document.getElementById('scannerModal').style.display = 'flex';
-                initScanner();
+                setTimeout(initScanner, 100); // Small delay to ensure modal is visible
             });
             document.getElementById('closeScanner').addEventListener('click', closeScanner);
             document.getElementById('stopScanner').addEventListener('click', closeScanner);
             document.getElementById('adminToggle').addEventListener('click', toggleAdminPanel);
             document.getElementById('adminLoginBtn').addEventListener('click', authenticateAdmin);
             document.getElementById('adminExportBtn').addEventListener('click', exportData);
+            document.getElementById('clearDataBtn').addEventListener('click', clearData);
+
+            // Enter key for admin password
+            document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    authenticateAdmin();
+                }
+            });
         });
 
         // مدیریت فرم ثبت فروش
@@ -754,7 +862,7 @@
                 return;
             }
             
-            if (!imei || imei.length !== 15) {
+            if (!imei || imei.length !== 15 || !/^\d{15}$/.test(imei)) {
                 showMessage('❌ شماره IMEI باید دقیقاً 15 رقم باشد', 'error');
                 resetButton();
                 return;
@@ -791,7 +899,7 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    showMessage(`✅ ثبت موفق: ${result.message} (ID: ${result.saleId || 'N/A'})`, 'success');
+                    showMessage(`✅ ثبت موفق: ${result.message}`, 'success');
                     form.reset();
                     form.sellerId.value = sellerId; 
                     setTodayDate();
@@ -812,12 +920,19 @@
             messageDiv.className = `message ${type}`;
             messageDiv.innerHTML = text;
             messageDiv.style.display = 'block';
+
+            // Auto-hide success messages
+            if (type === 'success') {
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 5000);
+            }
         }
 
         function resetButton() {
             const submitButton = document.getElementById('submitButton');
             submitButton.disabled = false;
-            submitButton.textContent = '✨ ثبت فروش';
+            submitButton.textButton.textContent = '✨ ثبت فروش';
         }
     </script>
 </body>
