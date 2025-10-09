@@ -67,7 +67,7 @@
     
     <div class="admin-menu" id="adminMenu">
         <button onclick="loadSalesData()">📊 مشاهده اطلاعات</button>
-        <button onclick="downloadData()">📥 دانلود CSV</button>
+        <button onclick="downloadData()">📅 دانلود CSV</button>
         <button onclick="showDeleteModal()">🗑️ حذف همه داده‌ها</button>
         <button onclick="logoutAdmin()">🚪 خروج</button>
     </div>
@@ -113,12 +113,14 @@
 
     <script>
         // متغیرهای کلی
+        // این خط برای حفظ وضعیت ادمین بعد از رفرش ضروری است!
         let isAdminLoggedIn = localStorage.getItem('adminToken') === 'Honor2025Admin!';
         const API_BASE = 'https://honor-sales-worker.farsimen.workers.dev';
 
         // بررسی وضعیت ادمین هنگام لود صفحه
         window.onload = function() {
             createStars();
+            // اگر ادمین قبلاً وارد شده، منوی آن را نشان بده
             if (isAdminLoggedIn) {
                 document.getElementById('adminMenu').style.display = 'block';
             }
@@ -185,16 +187,23 @@
             alert('خروج انجام شد');
         }
 
-        // بارگذاری اطلاعات فروش
+        // بارگذاری اطلاعات فروش - رفع مشکل خطا
         async function loadSalesData() {
             if (!isAdminLoggedIn) return alert('ورود ادمین لازم است');
             
             try {
                 const response = await fetch(`${API_BASE}/api/sales/data`, {
-                    headers: { 'Authorization': 'Bearer Honor2025Admin!' }
+                    headers: { 
+                        'X-Admin-Password': 'Honor2025Admin!',
+                        'Authorization': 'Bearer Honor2025Admin!'
+                    }
                 });
                 
-                if (!response.ok) throw new Error('خطا در ارتباط با سرور');
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('API Error:', errorText);
+                    throw new Error(`HTTP ${response.status}: خطا در ارتباط با سرور`);
+                }
                 
                 const result = await response.json();
                 const tbody = document.querySelector('#salesTable tbody');
@@ -217,20 +226,28 @@
                 
                 document.getElementById('dataTable').style.display = 'block';
             } catch (error) {
+                console.error('Load data error:', error);
                 alert('خطا در بارگذاری اطلاعات: ' + error.message);
             }
         }
 
-        // دانلود فایل CSV
+        // دانلود فایل CSV - رفع مشکل خطا
         async function downloadData() {
             if (!isAdminLoggedIn) return alert('ورود ادمین لازم است');
             
             try {
-                const response = await fetch(`${API_BASE}/api/sales/export`, {
-                    headers: { 'Authorization': 'Bearer Honor2025Admin!' }
+                const response = await fetch(`${API_BASE}/api/admin/export`, {
+                    headers: { 
+                        'X-Admin-Password': 'Honor2025Admin!',
+                        'Authorization': 'Bearer Honor2025Admin!'
+                    }
                 });
                 
-                if (!response.ok) throw new Error('خطا در ارتباط با سرور');
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Download Error:', errorText);
+                    throw new Error(`HTTP ${response.status}: خطا در ارتباط با سرور`);
+                }
                 
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
@@ -241,6 +258,7 @@
                 window.URL.revokeObjectURL(url);
                 alert('فایل دانلود شد');
             } catch (error) {
+                console.error('Download error:', error);
                 alert('خطا در دانلود: ' + error.message);
             }
         }
@@ -256,20 +274,29 @@
             document.getElementById('deleteModal').style.display = 'none';
         }
 
-        // حذف همه داده‌ها
+        // حذف همه داده‌ها - رفع مشکل خطا
         async function deleteAllData() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/delete-all`, {
+                const response = await fetch(`${API_BASE}/api/admin/clear`, {
                     method: 'DELETE',
-                    headers: { 'Authorization': 'Bearer Honor2025Admin!' }
+                    headers: { 
+                        'X-Admin-Password': 'Honor2025Admin!',
+                        'Authorization': 'Bearer Honor2025Admin!'
+                    }
                 });
                 
-                if (!response.ok) throw new Error('خطا در ارتباط با سرور');
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Delete Error:', errorText);
+                    throw new Error(`HTTP ${response.status}: خطا در ارتباط با سرور`);
+                }
                 
+                const result = await response.json();
                 alert('همه داده‌ها حذف شدند');
                 hideDeleteModal();
                 document.getElementById('dataTable').style.display = 'none';
             } catch (error) {
+                console.error('Delete error:', error);
                 alert('خطا در حذف: ' + error.message);
             }
         }
@@ -287,9 +314,16 @@
             try {
                 const response = await fetch(`${API_BASE}/api/sales/register`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-Seller-ID': 'seller-001'
+                    },
                     body: JSON.stringify({
-                        imei, phone_model: model, city, phone_number: phone
+                        imei, 
+                        phone_model: model, 
+                        city, 
+                        phone_number: phone,
+                        sale_date: new Date().toISOString().split('T')[0]
                     })
                 });
                 
@@ -303,6 +337,7 @@
                     document.getElementById('phone').value = '';
                 }
             } catch (error) {
+                console.error('Submit error:', error);
                 alert('خطا در ثبت: ' + error.message);
             }
         }
