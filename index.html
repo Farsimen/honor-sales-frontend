@@ -4,51 +4,528 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>سیستم مدیریت فروش Honor</title>
+<link href="https://cdn.jsdelivr.net/npm/vazirmatn@33.0.3/Vazirmatn-font-face.css" rel="stylesheet" />
 <style>
+  * {
+    box-sizing: border-box;
+  }
+  
   body {
-    margin: 0; padding: 20px; font-family: Tahoma, sans-serif; background: linear-gradient(135deg, #0a0a23 0%, #181f3a 50%, #1a164e 100%);
-    color: white; min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    font-family: 'Vazirmatn', 'Segoe UI', Tahoma, Arial, sans-serif;
+    background: linear-gradient(135deg, #162447 0%, #1f4068 55%, #3a416f 100%);
+    color: white;
+    min-height: 100vh;
+    line-height: 1.6;
   }
+  
+  .container {
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  /* Header Styles */
+  .header {
+    text-align: center;
+    margin: 60px 0 40px 0;
+  }
+  
+  .logo {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(45deg, #3ab54a, #3995e7);
+    border-radius: 20px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: bold;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    animation: pulse 2s infinite;
+    color: white;
+  }
+  
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  
+  h1 {
+    font-size: 28px;
+    margin: 0;
+    font-weight: 500;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+  
+  /* Admin Panel */
   .admin-icon {
-    position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: rgba(255,255,255,0.16);
-    border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1000;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
     font-size: 24px;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
   }
+  
+  .admin-icon:hover {
+    transform: scale(1.1);
+    background: rgba(255,255,255,0.3);
+  }
+  
+  .admin-logged {
+    background: rgba(55, 196, 83, 0.8) !important;
+    border-color: rgba(55, 196, 83, 0.6) !important;
+  }
+  
   #adminMenu {
-    display: none; position: fixed; top: 80px; right: 20px; background: rgba(20,20,40,0.85); border-radius: 8px;
-    padding: 10px; z-index: 1000; width: 200px;
+    display: none;
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    padding: 20px;
+    z-index: 1000;
+    width: 240px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    animation: slideIn 0.3s ease;
   }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
   #adminMenu button {
-    width: 100%; padding: 8px; margin: 6px 0; border: none; border-radius: 6px; background: #3366ff; color: white;
-    font-weight: bold; cursor: pointer;
+    width: 100%;
+    padding: 12px 16px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(45deg, #1f4068, #3a416f);
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: inherit;
   }
-  #dataTable {
-    display: none; margin-top: 20px; background: rgba(35,35,62,0.8); padding: 15px; border-radius: 10px;
-    max-width: 900px; overflow-x: auto;
+  
+  #adminMenu button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    background: linear-gradient(45deg, #2a5085, #4a5a8f);
   }
-  #dataTable table {
-    width: 100%; border-collapse: collapse;
+  
+  /* Form Styles */
+  .form-card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
   }
-  #dataTable th, #dataTable td {
-    padding: 10px; border: 1px solid #506dadaa; text-align: center;
-  }
-  #dataTable th {
-    background: #1a264a;
-    font-weight: 700;
-  }
+  
   .input-group {
-    position: relative; margin: 20px 0;
+    position: relative;
+    margin: 24px 0;
   }
+  
+  .input-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.9);
+    font-size: 14px;
+  }
+  
   input[type="text"] {
-    width: 100%; padding: 14px 44px 14px 16px; font-size: 16px; border-radius: 10px; border: none;
-    box-shadow: inset 0 0 8px #222; color: #111;
+    width: 100%;
+    padding: 16px 50px 16px 20px;
+    font-size: 17px;
+    border-radius: 14px;
+    border: 2px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.95);
+    color: #333;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    font-family: inherit;
+    box-shadow: 0 2px 8px rgba(34,34,34,0.1);
   }
+  
+  input[type="text"]:focus {
+    outline: none;
+    border-color: #3995e7;
+    background: rgba(255,255,255,0.98);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  }
+  
+  input[type="text"]::placeholder {
+    color: #666;
+  }
+  
   .scan-icon {
-    position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 18px; cursor: pointer; color: #1a73e8;
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-10%);
+    font-size: 20px;
+    cursor: pointer;
+    color: #1f4068;
+    transition: all 0.3s ease;
+    background: rgba(31,64,104,0.1);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
+  
+  .scan-icon:hover {
+    background: rgba(31,64,104,0.2);
+    transform: translateY(-10%) scale(1.1);
+  }
+  
   button.submit-btn {
-    width: 100%; padding: 16px; font-size: 18px; background: #4CAF50; border: none; border-radius: 10px; color: white;
-    cursor: pointer; font-weight: bold;
+    width: 100%;
+    padding: 18px;
+    font-size: 20px;
+    background: linear-gradient(90deg, #3ab54a 70%, #3995e7 100%);
+    border: none;
+    border-radius: 14px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(25,118,210,0.1);
+    position: relative;
+    overflow: hidden;
+    font-family: inherit;
+  }
+  
+  button.submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  }
+  
+  button.submit-btn:active {
+    transform: translateY(-1px);
+  }
+  
+  button.submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  /* Loading Animation */
+  .loading {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Data Table */
+  #dataTable {
+    display: none;
+    margin-top: 30px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 25px;
+    border-radius: 20px;
+    max-width: 900px;
+    overflow-x: auto;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  }
+  
+  #dataTable h2 {
+    margin-top: 0;
+    color: white;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  
+  #dataTable table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  #dataTable th,
+  #dataTable td {
+    padding: 12px 15px;
+    border: 1px solid rgba(255,255,255,0.2);
+    text-align: center;
+  }
+  
+  #dataTable th {
+    background: rgba(255,255,255,0.2);
+    font-weight: 600;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  
+  #dataTable td {
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.9);
+  }
+  
+  #dataTable table tr:nth-child(even) td {
+    background: rgba(25,40,90,0.36);
+  }
+  
+  #dataTable table tr:hover td {
+    background: rgba(255,255,255,0.15);
+  }
+  
+  /* Modal */
+  #deleteModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(10px);
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .modal-content {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    color: white;
+    max-width: 400px;
+    margin: 20px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    animation: slideUp 0.3s ease;
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .modal-content h3 {
+    margin-top: 0;
+    color: #ff6b6b;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+    justify-content: center;
+  }
+  
+  .modal-buttons button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-family: inherit;
+  }
+  
+  .btn-danger {
+    background: linear-gradient(45deg, #ff4757, #ff3838);
+    color: white;
+  }
+  
+  .btn-secondary {
+    background: rgba(255,255,255,0.2);
+    color: white;
+  }
+  
+  .modal-buttons button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  }
+  
+  /* Success/Error Messages */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 25px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    z-index: 3000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+    animation: slideDown 0.3s ease;
+    max-width: 90%;
+    text-align: center;
+  }
+  
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+  
+  .toast.success {
+    background: linear-gradient(45deg, #2ed573, #7bed9f);
+  }
+  
+  .toast.error {
+    background: linear-gradient(45deg, #ff4757, #ff6b7a);
+  }
+  
+  .toast.fadeOut {
+    animation: slideUp 0.3s ease forwards;
+  }
+  
+  /* Responsive */
+  @media (max-width: 600px) {
+    body {
+      padding: 10px;
+    }
+    
+    .container {
+      max-width: 100%;
+    }
+    
+    .form-card {
+      padding: 20px;
+      margin: 20px 0;
+    }
+    
+    .admin-icon {
+      width: 48px;
+      height: 48px;
+      font-size: 20px;
+    }
+    
+    #adminMenu {
+      width: 200px;
+      right: 10px;
+    }
+    
+    h1 {
+      font-size: 24px;
+    }
+    
+    .logo {
+      width: 60px;
+      height: 60px;
+      font-size: 28px;
+    }
+    
+    #dataTable {
+      padding: 15px;
+    }
+    
+    #dataTable th,
+    #dataTable td {
+      padding: 8px 10px;
+      font-size: 14px;
+    }
+    
+    .modal-content {
+      padding: 25px;
+      margin: 10px;
+    }
+    
+    .modal-buttons {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .modal-buttons button {
+      width: 100%;
+    }
+  }
+  
+  /* Input validation styles */
+  input[type="text"].error {
+    border-color: #ff4757;
+    background: rgba(255,71,87,0.1);
+  }
+  
+  input[type="text"].success {
+    border-color: #2ed573;
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
   }
 </style>
 </head>
@@ -57,46 +534,86 @@
 <div class="admin-icon" id="adminIcon" title="مدیریت">👤</div>
 
 <div id="adminMenu">
-  <button onclick="loadSalesData()">📊 مشاهده اطلاعات</button>
-  <button onclick="downloadData()">📥 دانلود CSV</button>
-  <button onclick="showDeleteModal()">🗑️ حذف همه داده‌ها</button>
-  <button onclick="logoutAdmin()">🚪 خروج</button>
+  <button onclick="loadSalesData()">
+    <span>📊</span>
+    <span>مشاهده اطلاعات</span>
+  </button>
+  <button onclick="downloadData()">
+    <span>📥</span>
+    <span>دانلود CSV</span>
+  </button>
+  <button onclick="showDeleteModal()">
+    <span>🗑️</span>
+    <span>حذف همه داده‌ها</span>
+  </button>
+  <button onclick="logoutAdmin()">
+    <span>🚪</span>
+    <span>خروج</span>
+  </button>
 </div>
 
-<h1 style="text-align:center; margin-top:70px;">ثبت فروش Honor</h1>
+<div class="container">
+  <div class="header">
+    <div class="logo">H</div>
+    <h1>سیستم مدیریت فروش Honor</h1>
+  </div>
 
-<div style="max-width: 480px; margin: 14px auto;">
-  <div class="input-group">
-    <input type="text" id="imeiInput" placeholder="سریال IMEI را وارد یا اسکن کنید" />
-    <span class="scan-icon" title="اسکن بارکد">📷</span>
+  <div class="form-card">
+    <div class="input-group">
+      <label class="input-label">سریال IMEI</label>
+      <input type="text" id="imeiInput" placeholder="سریال IMEI را وارد یا اسکن کنید" maxlength="15" />
+      <span class="scan-icon" title="اسکن بارکد">📷</span>
+    </div>
+    
+    <div class="input-group">
+      <label class="input-label">مدل گوشی</label>
+      <input type="text" id="modelInput" placeholder="مثال: Honor X5B" />
+    </div>
+    
+    <div class="input-group">
+      <label class="input-label">شهر</label>
+      <input type="text" id="cityInput" placeholder="نام شهر را وارد کنید" />
+    </div>
+    
+    <div class="input-group">
+      <label class="input-label">شماره تماس</label>
+      <input type="text" id="phoneInput" placeholder="09xxxxxxxxx" maxlength="11" />
+    </div>
+    
+    <button class="submit-btn" onclick="submitSale()" id="submitBtn">
+      <span id="submitText">ثبت فروش</span>
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+      </div>
+    </button>
   </div>
-  <div class="input-group">
-    <input type="text" id="modelInput" placeholder="مدل گوشی" />
-  </div>
-  <div class="input-group">
-    <input type="text" id="cityInput" placeholder="شهر" />
-  </div>
-  <div class="input-group">
-    <input type="text" id="phoneInput" placeholder="شماره تماس" />
-  </div>
-  <button class="submit-btn" onclick="submitSale()">ثبت فروش</button>
 </div>
 
 <div id="dataTable">
-  <h2>اطلاعات فروش</h2>
+  <h2>📊 اطلاعات فروش</h2>
   <table>
     <thead>
-      <tr><th>IMEI</th><th>مدل</th><th>شهر</th><th>تاریخ ثبت</th></tr>
+      <tr>
+        <th>IMEI</th>
+        <th>مدل</th>
+        <th>شهر</th>
+        <th>شماره تماس</th>
+        <th>تاریخ ثبت</th>
+      </tr>
     </thead>
     <tbody id="salesTbody"></tbody>
   </table>
 </div>
 
-<div id="deleteModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; z-index:2000;">
-  <div style="background:#222; padding:30px; border-radius:12px; text-align:center; color:#eee;">
-    <p>آیا مطمئن هستید که می خواهید همه داده ها حذف شوند؟</p>
-    <button onclick="deleteAllData()" style="margin-right:10px; padding:10px 20px; background:#ff4444; border:none; border-radius:10px; cursor:pointer;">بله حذف کن</button>
-    <button onclick="hideDeleteModal()" style="padding:10px 20px; background:#666; border:none; border-radius:10px; cursor:pointer;">انصراف</button>
+<div id="deleteModal">
+  <div class="modal-content">
+    <h3>⚠️ هشدار</h3>
+    <p>آیا مطمئن هستید که می‌خواهید همه داده‌ها حذف شوند؟<br>
+    این عمل قابل برگشت نیست!</p>
+    <div class="modal-buttons">
+      <button class="btn-danger" onclick="deleteAllData()">بله، حذف کن</button>
+      <button class="btn-secondary" onclick="hideDeleteModal()">انصراف</button>
+    </div>
   </div>
 </div>
 
@@ -111,17 +628,31 @@
   const adminMenu = document.getElementById('adminMenu');
 
   function toggleAdminMenu() {
-    adminMenu.style.display = isAdminLoggedIn ? 'block' : 'none';
+    if (adminMenu.style.display === 'block') {
+      adminMenu.style.display = 'none';
+    } else {
+      adminMenu.style.display = isAdminLoggedIn ? 'block' : 'none';
+    }
     if(!isAdminLoggedIn) document.getElementById('dataTable').style.display = 'none';
   }
 
   // بارگذاری وضعیت هنگام load
   window.onload = () => {
-    toggleAdminMenu();
+    if (isAdminLoggedIn) {
+      adminIcon.classList.add('admin-logged');
+    }
   };
 
-  // ورود ادمین (رمزعبور در prompt)
-  adminIcon.onclick = () => {
+  // بستن منو با کلیک خارج از آن
+  document.addEventListener('click', (e) => {
+    if (!adminIcon.contains(e.target) && !adminMenu.contains(e.target)) {
+      adminMenu.style.display = 'none';
+    }
+  });
+
+  // ورود ادمین
+  adminIcon.onclick = (e) => {
+    e.stopPropagation();
     if (isAdminLoggedIn) {
       toggleAdminMenu();
       return;
@@ -130,18 +661,51 @@
     if (pass === 'Honor2025Admin!') {
       localStorage.setItem('adminToken', 'Honor2025Admin!');
       isAdminLoggedIn = true;
+      adminIcon.classList.add('admin-logged');
       toggleAdminMenu();
-      alert('ورود موفقیت‌آمیز!');
-    } else {
-      alert('رمز عبور اشتباه است!');
+      showToast('ورود موفقیت‌آمیز!', 'success');
+    } else if (pass !== null) {
+      showToast('رمز عبور اشتباه است!', 'error');
     }
   };
 
   function logoutAdmin(){
     localStorage.removeItem('adminToken');
     isAdminLoggedIn = false;
-    toggleAdminMenu();
-    alert('خروج انجام شد');
+    adminIcon.classList.remove('admin-logged');
+    adminMenu.style.display = 'none';
+    document.getElementById('dataTable').style.display = 'none';
+    showToast('خروج انجام شد', 'success');
+  }
+
+  // نمایش پیام toast
+  function showToast(text, type = 'success') {
+    const existingToast = document.querySelector('.toast');
+    if (existingToast) {
+      existingToast.remove();
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = text;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.classList.add('fadeOut');
+      setTimeout(() => {
+        toast.remove();
+      }, 300);
+    }, 4000);
+  }
+
+  // اعتبارسنجی فیلدها
+  function validateField(input, isValid) {
+    input.classList.remove('error', 'success');
+    if (isValid) {
+      input.classList.add('success');
+    } else {
+      input.classList.add('error');
+    }
   }
 
   // ثبت فروش جدید
@@ -151,97 +715,159 @@
     const city = document.getElementById('cityInput').value.trim();
     const phone = document.getElementById('phoneInput').value.trim();
 
+    // اعتبارسنجی
+    const imeiInput = document.getElementById('imeiInput');
+    const modelInput = document.getElementById('modelInput');
+
     if (!imei || imei.length !== 15) {
-      alert('IMEI باید دقیقاً 15 رقم باشد.');
+      validateField(imeiInput, false);
+      showToast('IMEI باید دقیقاً 15 رقم باشد.', 'error');
+      imeiInput.focus();
       return;
     }
+    validateField(imeiInput, true);
+
     if (!model) {
-      alert('مدل گوشی را وارد کنید.');
+      validateField(modelInput, false);
+      showToast('مدل گوشی را وارد کنید.', 'error');
+      modelInput.focus();
       return;
     }
+    validateField(modelInput, true);
+
+    // نمایش لودینگ
+    const submitBtn = document.getElementById('submitBtn');
+    const submitText = document.getElementById('submitText');
+    const loading = document.getElementById('loading');
+    
+    submitBtn.disabled = true;
+    submitText.style.opacity = '0';
+    loading.style.display = 'block';
 
     try {
       const res = await fetch(API_BASE + '/api/sales/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Seller-ID': 'frontend' },
-        body: JSON.stringify({ imei, phone_model: model, city, phone_number: phone, sale_date: new Date().toISOString().split('T')[0] })
+        headers: { 
+          'Content-Type': 'application/json', 
+          'X-Seller-ID': 'frontend' 
+        },
+        body: JSON.stringify({ 
+          imei, 
+          phone_model: model, 
+          city, 
+          phone_number: phone, 
+          sale_date: new Date().toISOString().split('T')[0] 
+        })
       });
+      
       const data = await res.json();
-      alert(data.message || 'خطا در ثبت فروش');
+      
       if (data.success) {
+        showToast(data.message || 'فروش با موفقیت ثبت شد!', 'success');
+        // پاک کردن فرم
         document.getElementById('imeiInput').value = '';
         document.getElementById('modelInput').value = '';
         document.getElementById('cityInput').value = '';
         document.getElementById('phoneInput').value = '';
+        
+        // حذف کلاس‌های validation
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+          input.classList.remove('error', 'success');
+        });
+      } else {
+        showToast(data.message || 'خطا در ثبت فروش', 'error');
       }
     } catch(e) {
-      alert('خطای شبکه: ' + e.message);
+      showToast('خطای شبکه: ' + e.message, 'error');
+    } finally {
+      // مخفی کردن لودینگ
+      submitBtn.disabled = false;
+      submitText.style.opacity = '1';
+      loading.style.display = 'none';
     }
   }
 
   // بارگذاری اطلاعات فروش
   async function loadSalesData() {
     if (!isAdminLoggedIn) {
-      alert('ابتدا به عنوان ادمین وارد شوید!');
+      showToast('ابتدا به عنوان ادمین وارد شوید!', 'error');
       return;
     }
+    
     try {
       const res = await fetch(API_BASE + '/api/sales/data', {
         headers: { 'Authorization': 'Bearer Honor2025Admin!' }
       });
+      
       if(!res.ok) throw new Error('خطا در دریافت اطلاعات');
+      
       const result = await res.json();
       const tbody = document.getElementById('salesTbody');
       tbody.innerHTML = '';
+      
       if(result.data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4">داده‌ای موجود نیست</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5">داده‌ای موجود نیست</td></tr>';
       } else {
         result.data.forEach(row => {
+          const date = new Date(row.created_at);
+          const persianDate = date.toLocaleDateString('fa-IR');
           tbody.innerHTML += `<tr>
             <td>${row.imei}</td>
             <td>${row.phone_model}</td>
             <td>${row.city || '-'}</td>
-            <td>${new Date(row.created_at).toLocaleDateString('fa-IR')}</td>
+            <td>${row.phone_number || '-'}</td>
+            <td>${persianDate}</td>
           </tr>`;
         });
       }
+      
       document.getElementById('dataTable').style.display = 'block';
+      adminMenu.style.display = 'none';
+      showToast(`${result.data.length} رکورد بارگذاری شد`, 'success');
     } catch(e) {
-      alert('خطا در بارگذاری داده‌ها: ' + e.message);
+      showToast('خطا در بارگذاری داده‌ها: ' + e.message, 'error');
     }
   }
 
   // دانلود CSV
   async function downloadData() {
     if(!isAdminLoggedIn){
-      alert('ابتدا به عنوان ادمین وارد شوید!');
+      showToast('ابتدا به عنوان ادمین وارد شوید!', 'error');
       return;
     }
+    
     try{
       const res = await fetch(API_BASE + '/api/sales/export', {
         headers: { 'Authorization': 'Bearer Honor2025Admin!' }
       });
+      
       if(!res.ok) throw new Error('خطا در دانلود فایل');
+      
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'honor_sales_export.csv';
+      a.download = `honor_sales_${new Date().toISOString().split('T')[0]}.csv`;
       a.click();
       URL.revokeObjectURL(url);
+      
+      showToast('فایل با موفقیت دانلود شد', 'success');
+      adminMenu.style.display = 'none';
     } catch(e){
-      alert('خطا در دانلود: ' + e.message);
+      showToast('خطا در دانلود: ' + e.message, 'error');
     }
   }
 
   // نمایش/مخفی مودال حذف داده‌ها
   function showDeleteModal() {
     if(!isAdminLoggedIn){
-      alert('ابتدا به عنوان ادمین وارد شوید!');
+      showToast('ابتدا به عنوان ادمین وارد شوید!', 'error');
       return;
     }
     document.getElementById('deleteModal').style.display = 'flex';
+    adminMenu.style.display = 'none';
   }
+  
   function hideDeleteModal() {
     document.getElementById('deleteModal').style.display = 'none';
   }
@@ -253,14 +879,41 @@
         method: 'DELETE',
         headers: { 'Authorization': 'Bearer Honor2025Admin!' }
       });
+      
       if(!res.ok) throw new Error('خطا در حذف داده‌ها');
-      alert('تمام داده‌ها حذف شدند');
+      
+      showToast('تمام داده‌ها حذف شدند', 'success');
       hideDeleteModal();
       document.getElementById('dataTable').style.display = 'none';
     } catch(e) {
-      alert('خطا در حذف: ' + e.message);
+      showToast('خطا در حذف: ' + e.message, 'error');
     }
   }
+
+  // اتصال Enter key به فرم
+  document.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+      submitSale();
+    }
+  });
+
+  // فقط اعداد در IMEI
+  document.getElementById('imeiInput').addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 15);
+  });
+
+  // فقط اعداد در شماره تلفن
+  document.getElementById('phoneInput').addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 11);
+  });
+
+  // Escape key برای بستن مودال
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      hideDeleteModal();
+      adminMenu.style.display = 'none';
+    }
+  });
 </script>
 
 </body>
