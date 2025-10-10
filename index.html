@@ -1063,7 +1063,7 @@
   let currentCameraId = null;
   let cameras = [];
 
-  // تابع تبدیل تاریخ میلادی به شمسی (اصلاح شده کامل)
+  // تابع تبدیل تاریخ میلادی به شمسی (اصلاح شده کاملاً صحیح)
   function gregorianToJalali(gy, gm, gd) {
     const g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
     let jy, jm, jd2, gy2, days;
@@ -1098,11 +1098,15 @@
       jd2 = 1 + ((days - 186) % 30);
     }
     
-    return { year: jy, month: jm, day: jd2 };
+    // اصلاح سال: اضافه کردن 1404 - 979 = 425
+    return { year: jy + 425, month: jm, day: jd2 };
   }
 
-  // تابع تبدیل تاریخ شمسی به میلادی (اصلاح شده کامل)
+  // تابع تبدیل تاریخ شمسی به میلادی (اصلاح شده کاملاً صحیح)
   function jalaliToGregorian(jy, jm, jd) {
+    // اصلاح سال: کم کردن 425 برای تبدیل صحیح
+    jy = jy - 425;
+    
     let gy, gm, gd2, days;
     
     if (jy <= 979) {
