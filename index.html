@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>سیستم مدیریت فروش Honor</title>
 <link href="https://cdn.jsdelivr.net/npm/vazirmatn@33.0.3/Vazirmatn-font-face.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/jalaali-js@1.2.7/dist/jalaali.min.js"></script>
 <style>
   * {
     box-sizing: border-box;
@@ -194,29 +195,124 @@
   }
   
   /* Date Input Styles */
-  input[type="date"] {
-    padding: 16px 20px;
-    direction: ltr;
+  .date-picker-container {
+    position: relative;
   }
   
-  input[type="date"]::-webkit-calendar-picker-indicator {
-    background: url('📅') no-repeat center;
-    background-size: 16px;
+  .date-picker-input {
     cursor: pointer;
+    padding: 16px 20px !important;
+    background: rgba(255,255,255,0.95);
+    border: 2px solid rgba(255,255,255,0.2);
+    text-align: center;
+    font-weight: 600;
   }
   
-  .date-display {
+  .date-picker-input:hover {
+    border-color: #3995e7;
+    background: rgba(255,255,255,0.98);
+  }
+  
+  .date-picker-calendar {
     position: absolute;
-    left: 20px;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 100%;
+    right: 0;
+    left: 0;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 16px;
+    padding: 20px;
+    z-index: 1001;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: none;
+    margin-top: 8px;
+  }
+  
+  .date-picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .month-year-selector {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .month-year-selector select {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-family: inherit;
     font-size: 14px;
-    color: #666;
-    pointer-events: none;
-    background: rgba(255,255,255,0.9);
-    padding: 2px 6px;
-    border-radius: 4px;
+    width: auto;
+  }
+  
+  .nav-button {
+    background: #3995e7;
+    border: none;
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+  
+  .nav-button:hover {
+    background: #2a5085;
+  }
+  
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+  }
+  
+  .day-header {
+    text-align: center;
+    font-weight: 600;
+    color: #333;
+    padding: 8px 4px;
+    font-size: 14px;
+  }
+  
+  .day-cell {
+    text-align: center;
+    padding: 8px 4px;
+    cursor: pointer;
+    border-radius: 6px;
+    color: #333;
     font-weight: 500;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .day-cell:hover {
+    background: rgba(57,149,231,0.2);
+  }
+  
+  .day-cell.today {
+    background: rgba(57,149,231,0.3);
+    font-weight: bold;
+  }
+  
+  .day-cell.selected {
+    background: #3995e7;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .day-cell.other-month {
+    color: #999;
   }
   
   .scan-icon {
@@ -537,15 +633,20 @@
     .modal-buttons button {
       width: 100%;
     }
+    
+    .date-picker-calendar {
+      right: -20px;
+      left: -20px;
+    }
   }
   
   /* Input validation styles */
-  input[type="text"].error, input[type="date"].error {
+  input[type="text"].error, input[type="date"].error, .date-picker-input.error {
     border-color: #ff4757;
     background: rgba(255,71,87,0.1);
   }
   
-  input[type="text"].success, input[type="date"].success {
+  input[type="text"].success, input[type="date"].success, .date-picker-input.success {
     border-color: #2ed573;
   }
   
@@ -586,6 +687,11 @@
 
   <div class="form-card">
     <div class="input-group">
+      <label class="input-label">نام فروشگاه</label>
+      <input type="text" id="storeNameInput" placeholder="نام فروشگاه را وارد کنید" />
+    </div>
+    
+    <div class="input-group">
       <label class="input-label">سریال IMEI</label>
       <input type="text" id="imeiInput" placeholder="سریال IMEI را وارد یا اسکن کنید" maxlength="15" />
       <span class="scan-icon" title="اسکن بارکد">📷</span>
@@ -608,8 +714,20 @@
     
     <div class="input-group">
       <label class="input-label">تاریخ ثبت فروش</label>
-      <input type="date" id="dateInput" />
-      <span class="date-display" id="dateDisplay"></span>
+      <div class="date-picker-container">
+        <input type="text" id="dateInput" class="date-picker-input" placeholder="تاریخ را انتخاب کنید" readonly />
+        <div class="date-picker-calendar" id="datePickerCalendar">
+          <div class="date-picker-header">
+            <button type="button" class="nav-button" id="prevMonth">‹</button>
+            <div class="month-year-selector">
+              <select id="monthSelector"></select>
+              <select id="yearSelector"></select>
+            </div>
+            <button type="button" class="nav-button" id="nextMonth">›</button>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+      </div>
     </div>
     
     <button class="submit-btn" onclick="submitSale()" id="submitBtn">
@@ -626,6 +744,7 @@
   <table>
     <thead>
       <tr>
+        <th>نام فروشگاه</th>
         <th>IMEI</th>
         <th>مدل</th>
         <th>شهر</th>
@@ -662,7 +781,7 @@
   // تابع تبدیل تاریخ میلادی به شمسی
   function gregorianToJalali(gy, gm, gd) {
     const g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-    let jy, jm, jd, gy2, days;
+    let jy, jm, jd2, gy2, days;
     
     if (gy <= 1600) {
       jy = 0; gy -= 621;
@@ -683,13 +802,13 @@
     
     if (days < 186) {
       jm = 1 + (days >> 31);
-      jd = 1 + (days % 31);
+      jd2 = 1 + (days % 31);
     } else {
       jm = 7 + ((days - 186) >> 30);
-      jd = 1 + ((days - 186) % 30);
+      jd2 = 1 + ((days - 186) % 30);
     }
     
-    return { year: jy, month: jm, day: jd };
+    return { year: jy, month: jm, day: jd2 };
   }
 
   // تابع تبدیل تاریخ شمسی به میلادی
@@ -739,38 +858,172 @@
     return { year: gy, month: gm, day: gd2 };
   }
 
-  // تابع نمایش تاریخ شمسی
-  function displayJalaliDate(gregorianDate) {
-    if (!gregorianDate) return '';
-    
-    const date = new Date(gregorianDate);
-    const jalali = gregorianToJalali(date.getFullYear(), date.getMonth() + 1, date.getDate());
-    
-    const monthNames = [
-      'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
-      'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
-    ];
-    
-    return `${jalali.day} ${monthNames[jalali.month - 1]} ${jalali.year}`;
-  }
+  // نام ماه‌های فارسی
+  const persianMonthNames = [
+    'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+    'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
+  ];
 
-  // تنظیم تاریخ پیش‌فرض و نمایش
-  function initializeDateInput() {
+  // نام روزهای هفته
+  const persianDayNames = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج'];
+
+  // متغیرهای تقویم
+  let currentJalaliYear, currentJalaliMonth;
+  let selectedDate = null;
+
+  // تنظیم تقویم شمسی
+  function initializeDatePicker() {
     const dateInput = document.getElementById('dateInput');
-    const dateDisplay = document.getElementById('dateDisplay');
-    
+    const calendar = document.getElementById('datePickerCalendar');
+    const monthSelector = document.getElementById('monthSelector');
+    const yearSelector = document.getElementById('yearSelector');
+    const prevMonthBtn = document.getElementById('prevMonth');
+    const nextMonthBtn = document.getElementById('nextMonth');
+
     // تنظیم تاریخ امروز
     const today = new Date();
-    const todayString = today.toISOString().split('T')[0];
-    dateInput.value = todayString;
+    const todayJalali = gregorianToJalali(today.getFullYear(), today.getMonth() + 1, today.getDate());
     
-    // نمایش تاریخ شمسی
-    dateDisplay.textContent = displayJalaliDate(todayString);
-    
-    // رویداد تغییر تاریخ
-    dateInput.addEventListener('change', (e) => {
-      dateDisplay.textContent = displayJalaliDate(e.target.value);
+    currentJalaliYear = todayJalali.year;
+    currentJalaliMonth = todayJalali.month;
+    selectedDate = todayJalali;
+
+    // نمایش تاریخ امروز
+    updateDateInput();
+
+    // پر کردن selector ماه‌ها
+    persianMonthNames.forEach((month, index) => {
+      const option = document.createElement('option');
+      option.value = index + 1;
+      option.textContent = month;
+      monthSelector.appendChild(option);
     });
+
+    // پر کردن selector سال‌ها
+    for (let year = currentJalaliYear - 10; year <= currentJalaliYear + 10; year++) {
+      const option = document.createElement('option');
+      option.value = year;
+      option.textContent = year;
+      yearSelector.appendChild(option);
+    }
+
+    monthSelector.value = currentJalaliMonth;
+    yearSelector.value = currentJalaliYear;
+
+    // رویدادها
+    dateInput.addEventListener('click', () => {
+      calendar.style.display = calendar.style.display === 'block' ? 'none' : 'block';
+      updateCalendar();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!calendar.contains(e.target) && !dateInput.contains(e.target)) {
+        calendar.style.display = 'none';
+      }
+    });
+
+    monthSelector.addEventListener('change', () => {
+      currentJalaliMonth = parseInt(monthSelector.value);
+      updateCalendar();
+    });
+
+    yearSelector.addEventListener('change', () => {
+      currentJalaliYear = parseInt(yearSelector.value);
+      updateCalendar();
+    });
+
+    prevMonthBtn.addEventListener('click', () => {
+      if (currentJalaliMonth === 1) {
+        currentJalaliMonth = 12;
+        currentJalaliYear--;
+      } else {
+        currentJalaliMonth--;
+      }
+      monthSelector.value = currentJalaliMonth;
+      yearSelector.value = currentJalaliYear;
+      updateCalendar();
+    });
+
+    nextMonthBtn.addEventListener('click', () => {
+      if (currentJalaliMonth === 12) {
+        currentJalaliMonth = 1;
+        currentJalaliYear++;
+      } else {
+        currentJalaliMonth++;
+      }
+      monthSelector.value = currentJalaliMonth;
+      yearSelector.value = currentJalaliYear;
+      updateCalendar();
+    });
+  }
+
+  function updateDateInput() {
+    const dateInput = document.getElementById('dateInput');
+    if (selectedDate) {
+      dateInput.value = `${selectedDate.day} ${persianMonthNames[selectedDate.month - 1]} ${selectedDate.year}`;
+    }
+  }
+
+  function updateCalendar() {
+    const calendarGrid = document.getElementById('calendarGrid');
+    calendarGrid.innerHTML = '';
+
+    // اضافه کردن header روزهای هفته
+    persianDayNames.forEach(dayName => {
+      const dayHeader = document.createElement('div');
+      dayHeader.className = 'day-header';
+      dayHeader.textContent = dayName;
+      calendarGrid.appendChild(dayHeader);
+    });
+
+    // محاسبه روز اول ماه
+    const firstDayOfMonth = jalaliToGregorian(currentJalaliYear, currentJalaliMonth, 1);
+    const firstDay = new Date(firstDayOfMonth.year, firstDayOfMonth.month - 1, firstDayOfMonth.day);
+    const firstDayWeekday = (firstDay.getDay() + 1) % 7; // شنبه = 0
+
+    // تعداد روزهای ماه
+    const daysInMonth = currentJalaliMonth <= 6 ? 31 : (currentJalaliMonth <= 11 ? 30 : 
+      (((currentJalaliYear % 33) * 8 + ((currentJalaliYear % 33) + 3) / 4) % 30 < 1) ? 30 : 29);
+
+    // اضافه کردن خانه‌های خالی برای روزهای قبل از شروع ماه
+    for (let i = 0; i < firstDayWeekday; i++) {
+      const emptyCell = document.createElement('div');
+      emptyCell.className = 'day-cell';
+      calendarGrid.appendChild(emptyCell);
+    }
+
+    // اضافه کردن روزهای ماه
+    const today = new Date();
+    const todayJalali = gregorianToJalali(today.getFullYear(), today.getMonth() + 1, today.getDate());
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayCell = document.createElement('div');
+      dayCell.className = 'day-cell';
+      dayCell.textContent = day;
+
+      // تشخیص روز امروز
+      if (currentJalaliYear === todayJalali.year && 
+          currentJalaliMonth === todayJalali.month && 
+          day === todayJalali.day) {
+        dayCell.classList.add('today');
+      }
+
+      // تشخیص روز انتخاب شده
+      if (selectedDate && 
+          currentJalaliYear === selectedDate.year && 
+          currentJalaliMonth === selectedDate.month && 
+          day === selectedDate.day) {
+        dayCell.classList.add('selected');
+      }
+
+      dayCell.addEventListener('click', () => {
+        selectedDate = { year: currentJalaliYear, month: currentJalaliMonth, day: day };
+        updateDateInput();
+        document.getElementById('datePickerCalendar').style.display = 'none';
+      });
+
+      calendarGrid.appendChild(dayCell);
+    }
   }
 
   function toggleAdminMenu() {
@@ -787,7 +1040,7 @@
     if (isAdminLoggedIn) {
       adminIcon.classList.add('admin-logged');
     }
-    initializeDateInput();
+    initializeDatePicker();
   };
 
   // بستن منو با کلیک خارج از آن
@@ -857,16 +1110,25 @@
 
   // ثبت فروش جدید
   async function submitSale() {
+    const storeName = document.getElementById('storeNameInput').value.trim();
     const imei = document.getElementById('imeiInput').value.trim();
     const model = document.getElementById('modelInput').value.trim();
     const city = document.getElementById('cityInput').value.trim();
     const phone = document.getElementById('phoneInput').value.trim();
-    const saleDate = document.getElementById('dateInput').value;
 
     // اعتبارسنجی
+    const storeNameInput = document.getElementById('storeNameInput');
     const imeiInput = document.getElementById('imeiInput');
     const modelInput = document.getElementById('modelInput');
     const dateInput = document.getElementById('dateInput');
+
+    if (!storeName) {
+      validateField(storeNameInput, false);
+      showToast('نام فروشگاه را وارد کنید.', 'error');
+      storeNameInput.focus();
+      return;
+    }
+    validateField(storeNameInput, true);
 
     if (!imei || imei.length !== 15) {
       validateField(imeiInput, false);
@@ -884,13 +1146,17 @@
     }
     validateField(modelInput, true);
 
-    if (!saleDate) {
+    if (!selectedDate) {
       validateField(dateInput, false);
       showToast('تاریخ ثبت فروش را انتخاب کنید.', 'error');
       dateInput.focus();
       return;
     }
     validateField(dateInput, true);
+
+    // تبدیل تاریخ شمسی به میلادی برای ارسال
+    const gregorianDate = jalaliToGregorian(selectedDate.year, selectedDate.month, selectedDate.day);
+    const saleDate = `${gregorianDate.year}-${gregorianDate.month.toString().padStart(2, '0')}-${gregorianDate.day.toString().padStart(2, '0')}`;
 
     // نمایش لودینگ
     const submitBtn = document.getElementById('submitBtn');
@@ -909,6 +1175,7 @@
           'X-Seller-ID': 'frontend' 
         },
         body: JSON.stringify({ 
+          store_name: storeName,
           imei, 
           phone_model: model, 
           city, 
@@ -922,6 +1189,7 @@
       if (data.success) {
         showToast(data.message || 'فروش با موفقیت ثبت شد!', 'success');
         // پاک کردن فرم
+        document.getElementById('storeNameInput').value = '';
         document.getElementById('imeiInput').value = '';
         document.getElementById('modelInput').value = '';
         document.getElementById('cityInput').value = '';
@@ -929,12 +1197,14 @@
         
         // تنظیم مجدد تاریخ امروز
         const today = new Date();
-        const todayString = today.toISOString().split('T')[0];
-        document.getElementById('dateInput').value = todayString;
-        document.getElementById('dateDisplay').textContent = displayJalaliDate(todayString);
+        const todayJalali = gregorianToJalali(today.getFullYear(), today.getMonth() + 1, today.getDate());
+        selectedDate = todayJalali;
+        currentJalaliYear = todayJalali.year;
+        currentJalaliMonth = todayJalali.month;
+        updateDateInput();
         
         // حذف کلاس‌های validation
-        document.querySelectorAll('input[type="text"], input[type="date"]').forEach(input => {
+        document.querySelectorAll('input[type="text"], .date-picker-input').forEach(input => {
           input.classList.remove('error', 'success');
         });
       } else {
@@ -969,11 +1239,19 @@
       tbody.innerHTML = '';
       
       if(result.data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5">داده‌ای موجود نیست</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6">داده‌ای موجود نیست</td></tr>';
       } else {
         result.data.forEach(row => {
-          const persianDate = displayJalaliDate(row.sale_date || row.created_at);
+          // تبدیل تاریخ به شمسی
+          let persianDate = '';
+          if (row.sale_date || row.created_at) {
+            const date = new Date(row.sale_date || row.created_at);
+            const jalali = gregorianToJalali(date.getFullYear(), date.getMonth() + 1, date.getDate());
+            persianDate = `${jalali.day} ${persianMonthNames[jalali.month - 1]} ${jalali.year}`;
+          }
+          
           tbody.innerHTML += `<tr>
+            <td>${row.store_name || '-'}</td>
             <td>${row.imei}</td>
             <td>${row.phone_model}</td>
             <td>${row.city || '-'}</td>
@@ -1074,6 +1352,7 @@
     if (e.key === 'Escape') {
       hideDeleteModal();
       adminMenu.style.display = 'none';
+      document.getElementById('datePickerCalendar').style.display = 'none';
     }
   });
 </script>
