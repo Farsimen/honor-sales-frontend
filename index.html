@@ -113,18 +113,44 @@
 
     <script>
         // متغیرهای کلی
-        // این خط برای حفظ وضعیت ادمین بعد از رفرش ضروری است!
-        let isAdminLoggedIn = localStorage.getItem('adminToken') === 'Honor2025Admin!';
-        const API_BASE = 'https://honor-sales-worker.farsimen.workers.dev';
+const API_BASE = 'https://honor-sales-worker.farsimen.workers.dev';
 
-        // بررسی وضعیت ادمین هنگام لود صفحه
-        window.onload = function() {
-            createStars();
-            // اگر ادمین قبلاً وارد شده، منوی آن را نشان بده
-            if (isAdminLoggedIn) {
-                document.getElementById('adminMenu').style.display = 'block';
-            }
-        };
+// تابع بررسی لاگین ادمین از localStorage
+function checkAdminLogin() {
+    return localStorage.getItem('adminToken') === 'Honor2025Admin!';
+}
+
+// نمایش یا پنهان‌سازی منوی ادمین بر اساس وضعیت
+function toggleAdminMenu() {
+    if (checkAdminLogin()) {
+        document.getElementById('adminMenu').style.display = 'block';
+    } else {
+        document.getElementById('adminMenu').style.display = 'none';
+        // همچنین سایر بخش‌های مربوط به ادمین را مخفی کن در صورت خروج
+        if (document.getElementById('dataTable'))
+            document.getElementById('dataTable').style.display = 'none';
+    }
+}
+
+// بررسی وضعیت ادمین هنگام لود صفحه
+window.onload = function() {
+    createStars();
+    toggleAdminMenu();
+};
+
+// هنگام ورود ادمین (بعد از اینکه رمز عبور صحیح وارد شد):
+function adminLoginSuccess() {
+    localStorage.setItem('adminToken', 'Honor2025Admin!');
+    toggleAdminMenu();
+    alert('ورود موفقیت‌آمیز');
+}
+
+// هنگام خروج ادمین:
+function logoutAdmin() {
+    localStorage.removeItem('adminToken');
+    toggleAdminMenu();
+    alert('خروج انجام شد');
+}
 
         // ایجاد ستاره‌های متحرک
         function createStars() {
