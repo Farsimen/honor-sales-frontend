@@ -15,16 +15,78 @@
     margin: 0;
     padding: 20px;
     font-family: 'Vazirmatn', 'Segoe UI', Tahoma, Arial, sans-serif;
-    background: linear-gradient(135deg, #162447 0%, #1f4068 55%, #3a416f 100%);
+    background: #0a0a0a;
     color: white;
     min-height: 100vh;
     line-height: 1.6;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Star Field Background */
+  .star-field {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -10;
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 70%, #0f0f23 100%);
+  }
+
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 3s infinite;
+  }
+
+  .star.small {
+    width: 1px;
+    height: 1px;
+  }
+
+  .star.medium {
+    width: 2px;
+    height: 2px;
+    box-shadow: 0 0 6px rgba(255,255,255,0.8);
+  }
+
+  .star.large {
+    width: 3px;
+    height: 3px;
+    box-shadow: 0 0 10px rgba(255,255,255,0.9);
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  /* Moving Stars Animation */
+  @keyframes move-star {
+    from {
+      transform: translateX(-100px);
+    }
+    to {
+      transform: translateX(calc(100vw + 100px));
+    }
+  }
+
+  .moving-star {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, white, transparent);
+    height: 1px;
+    width: 50px;
+    animation: move-star 8s linear infinite;
+    opacity: 0.7;
   }
   
   .container {
     max-width: 500px;
     margin: 0 auto;
     position: relative;
+    z-index: 1;
   }
   
   /* Header Styles */
@@ -44,22 +106,23 @@
     justify-content: center;
     font-size: 36px;
     font-weight: bold;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 50px rgba(57,149,231,0.3);
     animation: pulse 2s infinite;
     color: white;
+    border: 2px solid rgba(255,255,255,0.1);
   }
   
   @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    0% { transform: scale(1); box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 50px rgba(57,149,231,0.3); }
+    50% { transform: scale(1.05); box-shadow: 0 15px 40px rgba(0,0,0,0.7), 0 0 70px rgba(57,149,231,0.5); }
+    100% { transform: scale(1); box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 50px rgba(57,149,231,0.3); }
   }
   
   h1 {
     font-size: 28px;
     margin: 0;
     font-weight: 500;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.1);
   }
   
   /* Admin Panel */
@@ -69,9 +132,9 @@
     right: 20px;
     width: 56px;
     height: 56px;
-    background: rgba(255,255,255,0.2);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.2);
     border-radius: 50%;
     cursor: pointer;
     display: flex;
@@ -80,17 +143,19 @@
     z-index: 1000;
     font-size: 24px;
     transition: all 0.3s ease;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.1);
   }
   
   .admin-icon:hover {
     transform: scale(1.1);
-    background: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.2);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.4), 0 0 30px rgba(255,255,255,0.2);
   }
   
   .admin-logged {
     background: rgba(55, 196, 83, 0.8) !important;
     border-color: rgba(55, 196, 83, 0.6) !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3), 0 0 30px rgba(55,196,83,0.4) !important;
   }
   
   #adminMenu {
@@ -98,14 +163,14 @@
     position: fixed;
     top: 90px;
     right: 20px;
-    background: rgba(255,255,255,0.15);
+    background: rgba(0,0,0,0.8);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 16px;
     padding: 20px;
     z-index: 1000;
     width: 240px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.1);
     animation: slideIn 0.3s ease;
   }
   
@@ -136,22 +201,23 @@
     align-items: center;
     gap: 10px;
     font-family: inherit;
+    border: 1px solid rgba(255,255,255,0.1);
   }
   
   #adminMenu button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3), 0 0 15px rgba(57,149,231,0.3);
     background: linear-gradient(45deg, #2a5085, #4a5a8f);
   }
   
   /* Form Styles */
   .form-card {
-    background: rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.6);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 24px;
     padding: 30px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.05);
     margin-bottom: 30px;
   }
   
@@ -179,7 +245,7 @@
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
     font-family: inherit;
-    box-shadow: 0 2px 8px rgba(34,34,34,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   }
   
   input[type="text"]:focus, input[type="date"]:focus, select:focus {
@@ -187,7 +253,7 @@
     border-color: #3995e7;
     background: rgba(255,255,255,0.98);
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2), 0 0 20px rgba(57,149,231,0.3);
   }
   
   input[type="text"]::placeholder {
@@ -211,6 +277,7 @@
   .date-picker-input:hover {
     border-color: #3995e7;
     background: rgba(255,255,255,0.98);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2), 0 0 15px rgba(57,149,231,0.2);
   }
   
   .date-picker-calendar {
@@ -218,13 +285,13 @@
     top: 100%;
     right: 0;
     left: 0;
-    background: rgba(255,255,255,0.95);
+    background: rgba(0,0,0,0.9);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255,255,255,0.3);
     border-radius: 16px;
     padding: 20px;
     z-index: 1001;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.1);
     display: none;
     margin-top: 8px;
   }
@@ -245,14 +312,16 @@
   .month-year-selector select {
     padding: 8px;
     border-radius: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid rgba(255,255,255,0.3);
     font-family: inherit;
     font-size: 14px;
     width: auto;
+    background: rgba(0,0,0,0.8);
+    color: white;
   }
   
   .nav-button {
-    background: #3995e7;
+    background: linear-gradient(45deg, #3995e7, #57c4e7);
     border: none;
     border-radius: 8px;
     width: 32px;
@@ -263,10 +332,14 @@
     align-items: center;
     justify-content: center;
     font-weight: bold;
+    box-shadow: 0 4px 12px rgba(57,149,231,0.3);
+    transition: all 0.3s ease;
   }
   
   .nav-button:hover {
-    background: #2a5085;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(57,149,231,0.4);
+    background: linear-gradient(45deg, #2a5085, #4a8cb8);
   }
   
   .calendar-grid {
@@ -278,7 +351,7 @@
   .day-header {
     text-align: center;
     font-weight: 600;
-    color: #333;
+    color: rgba(255,255,255,0.8);
     padding: 8px 4px;
     font-size: 14px;
   }
@@ -288,31 +361,36 @@
     padding: 8px 4px;
     cursor: pointer;
     border-radius: 6px;
-    color: #333;
+    color: rgba(255,255,255,0.9);
     font-weight: 500;
     min-height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s ease;
   }
   
   .day-cell:hover {
-    background: rgba(57,149,231,0.2);
+    background: rgba(57,149,231,0.3);
+    box-shadow: 0 4px 12px rgba(57,149,231,0.2);
+    transform: scale(1.1);
   }
   
   .day-cell.today {
-    background: rgba(57,149,231,0.3);
+    background: rgba(57,149,231,0.4);
     font-weight: bold;
+    box-shadow: 0 0 10px rgba(57,149,231,0.5);
   }
   
   .day-cell.selected {
-    background: #3995e7;
+    background: linear-gradient(45deg, #3995e7, #57c4e7);
     color: white;
     font-weight: bold;
+    box-shadow: 0 4px 15px rgba(57,149,231,0.5);
   }
   
   .day-cell.other-month {
-    color: #999;
+    color: rgba(255,255,255,0.3);
   }
   
   .scan-icon {
@@ -342,22 +420,24 @@
     width: 100%;
     padding: 18px;
     font-size: 20px;
-    background: linear-gradient(90deg, #3ab54a 70%, #3995e7 100%);
+    background: linear-gradient(90deg, #3ab54a 0%, #57e389 50%, #3995e7 100%);
     border: none;
     border-radius: 14px;
     color: white;
     cursor: pointer;
     font-weight: bold;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 20px rgba(25,118,210,0.1);
+    box-shadow: 0 8px 25px rgba(58,181,74,0.4), 0 0 20px rgba(57,149,231,0.2);
     position: relative;
     overflow: hidden;
     font-family: inherit;
+    border: 1px solid rgba(255,255,255,0.1);
   }
   
   button.submit-btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    box-shadow: 0 15px 35px rgba(58,181,74,0.5), 0 0 30px rgba(57,149,231,0.3);
+    background: linear-gradient(90deg, #48c55a 0%, #68f399 50%, #4aa5f7 100%);
   }
   
   button.submit-btn:active {
@@ -397,14 +477,14 @@
   #dataTable {
     display: none;
     margin-top: 30px;
-    background: rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.8);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255,255,255,0.2);
     padding: 25px;
     border-radius: 20px;
     max-width: 900px;
     overflow-x: auto;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.1);
   }
   
   #dataTable h2 {
@@ -413,6 +493,7 @@
     font-weight: 500;
     text-align: center;
     margin-bottom: 25px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
   }
   
   #dataTable table {
@@ -429,25 +510,27 @@
   }
   
   #dataTable th {
-    background: rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.6);
     font-weight: 600;
     color: white;
     position: sticky;
     top: 0;
     z-index: 10;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
   }
   
   #dataTable td {
-    background: rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.4);
     color: rgba(255,255,255,0.9);
   }
   
   #dataTable table tr:nth-child(even) td {
-    background: rgba(25,40,90,0.36);
+    background: rgba(25,40,90,0.3);
   }
   
   #dataTable table tr:hover td {
-    background: rgba(255,255,255,0.15);
+    background: rgba(57,149,231,0.2);
+    box-shadow: 0 2px 10px rgba(57,149,231,0.2);
   }
   
   /* Modal */
@@ -458,8 +541,8 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(10px);
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(15px);
     align-items: center;
     justify-content: center;
     z-index: 2000;
@@ -472,7 +555,7 @@
   }
   
   .modal-content {
-    background: rgba(255,255,255,0.15);
+    background: rgba(0,0,0,0.9);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255,255,255,0.2);
     padding: 40px;
@@ -481,7 +564,7 @@
     color: white;
     max-width: 400px;
     margin: 20px;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 30px rgba(255,255,255,0.1);
     animation: slideUp 0.3s ease;
   }
   
@@ -499,6 +582,7 @@
   .modal-content h3 {
     margin-top: 0;
     color: #ff6b6b;
+    text-shadow: 0 2px 10px rgba(255,107,107,0.3);
   }
   
   .modal-buttons {
@@ -521,16 +605,18 @@
   .btn-danger {
     background: linear-gradient(45deg, #ff4757, #ff3838);
     color: white;
+    box-shadow: 0 4px 15px rgba(255,71,87,0.3);
   }
   
   .btn-secondary {
     background: rgba(255,255,255,0.2);
     color: white;
+    box-shadow: 0 4px 15px rgba(255,255,255,0.1);
   }
   
   .modal-buttons button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
   }
   
   /* Success/Error Messages */
@@ -544,11 +630,12 @@
     color: white;
     font-weight: 600;
     z-index: 3000;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.1);
+    backdrop-filter: blur(15px);
     animation: slideDown 0.3s ease;
     max-width: 90%;
     text-align: center;
+    border: 1px solid rgba(255,255,255,0.2);
   }
   
   @keyframes slideDown {
@@ -563,11 +650,13 @@
   }
   
   .toast.success {
-    background: linear-gradient(45deg, #2ed573, #7bed9f);
+    background: linear-gradient(45deg, rgba(46,213,115,0.9), rgba(123,237,159,0.9));
+    box-shadow: 0 10px 30px rgba(46,213,115,0.3), 0 0 20px rgba(123,237,159,0.2);
   }
   
   .toast.error {
-    background: linear-gradient(45deg, #ff4757, #ff6b7a);
+    background: linear-gradient(45deg, rgba(255,71,87,0.9), rgba(255,107,122,0.9));
+    box-shadow: 0 10px 30px rgba(255,71,87,0.3), 0 0 20px rgba(255,107,122,0.2);
   }
   
   .toast.fadeOut {
@@ -644,19 +733,32 @@
   input[type="text"].error, input[type="date"].error, .date-picker-input.error {
     border-color: #ff4757;
     background: rgba(255,71,87,0.1);
+    box-shadow: 0 0 15px rgba(255,71,87,0.3);
   }
   
   input[type="text"].success, input[type="date"].success, .date-picker-input.success {
     border-color: #2ed573;
+    box-shadow: 0 0 15px rgba(46,213,115,0.3);
   }
   
   /* Smooth scrolling */
   html {
     scroll-behavior: smooth;
   }
+
+  /* Extra glow effects */
+  .form-card:hover {
+    box-shadow: 0 25px 50px rgba(0,0,0,0.4), 0 0 30px rgba(255,255,255,0.1);
+  }
+
+  #dataTable:hover {
+    box-shadow: 0 25px 50px rgba(0,0,0,0.4), 0 0 30px rgba(255,255,255,0.1);
+  }
 </style>
 </head>
 <body>
+
+<div class="star-field" id="starField"></div>
 
 <div class="admin-icon" id="adminIcon" title="مدیریت">👤</div>
 
@@ -778,7 +880,7 @@
   const adminIcon = document.getElementById('adminIcon');
   const adminMenu = document.getElementById('adminMenu');
 
-  // تابع تبدیل تاریخ میلادی به شمسی
+  // تابع تبدیل تاریخ میلادی به شمسی (اصلاح شده)
   function gregorianToJalali(gy, gm, gd) {
     const g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
     let jy, jm, jd2, gy2, days;
@@ -811,7 +913,7 @@
     return { year: jy, month: jm, day: jd2 };
   }
 
-  // تابع تبدیل تاریخ شمسی به میلادی
+  // تابع تبدیل تاریخ شمسی به میلادی (اصلاح شده)
   function jalaliToGregorian(jy, jm, jd) {
     let gy, gm, gd2, days;
     
@@ -1026,6 +1128,66 @@
     }
   }
 
+  // Star Field Background Function
+  function createStarField() {
+    const starField = document.getElementById('starField');
+    const numStars = 200;
+    const numMovingStars = 3;
+
+    // Create static stars
+    for (let i = 0; i < numStars; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      
+      // Random size
+      const size = Math.random();
+      if (size < 0.7) {
+        star.classList.add('small');
+      } else if (size < 0.9) {
+        star.classList.add('medium');
+      } else {
+        star.classList.add('large');
+      }
+
+      // Random position
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      
+      // Random animation delay
+      star.style.animationDelay = Math.random() * 3 + 's';
+      
+      starField.appendChild(star);
+    }
+
+    // Create moving stars
+    for (let i = 0; i < numMovingStars; i++) {
+      const movingStar = document.createElement('div');
+      movingStar.className = 'moving-star';
+      movingStar.style.top = Math.random() * 100 + '%';
+      movingStar.style.animationDelay = Math.random() * 8 + 's';
+      movingStar.style.animationDuration = (Math.random() * 5 + 5) + 's';
+      starField.appendChild(movingStar);
+    }
+
+    // Add more moving stars periodically
+    setInterval(() => {
+      if (document.querySelectorAll('.moving-star').length < 5) {
+        const movingStar = document.createElement('div');
+        movingStar.className = 'moving-star';
+        movingStar.style.top = Math.random() * 100 + '%';
+        movingStar.style.animationDuration = (Math.random() * 5 + 5) + 's';
+        starField.appendChild(movingStar);
+        
+        // Remove after animation
+        setTimeout(() => {
+          if (movingStar.parentNode) {
+            movingStar.parentNode.removeChild(movingStar);
+          }
+        }, 10000);
+      }
+    }, 3000);
+  }
+
   function toggleAdminMenu() {
     if (adminMenu.style.display === 'block') {
       adminMenu.style.display = 'none';
@@ -1041,6 +1203,7 @@
       adminIcon.classList.add('admin-logged');
     }
     initializeDatePicker();
+    createStarField();
   };
 
   // بستن منو با کلیک خارج از آن
