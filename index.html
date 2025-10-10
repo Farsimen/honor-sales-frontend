@@ -1,372 +1,267 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سیستم مدیریت فروش Honor</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
-            background: linear-gradient(135deg, #0a0a23 0%, #181f3a 50%, #1a164e 100%);
-            color: white;
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-        .stars { position: fixed; width: 100%; height: 100%; z-index: 0; }
-        .container { position: relative; z-index: 10; max-width: 800px; margin: 0 auto; padding: 20px; }
-        .admin-icon {
-            position: fixed; top: 20px; right: 20px; width: 50px; height: 50px;
-            background: rgba(255,255,255,0.2); border-radius: 50%; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; z-index: 1000;
-            border: 2px solid #4CAF50;
-        }
-        .admin-menu {
-            position: fixed; top: 80px; right: 20px; background: rgba(0,0,0,0.9);
-            border-radius: 10px; padding: 15px; display: none; z-index: 999;
-        }
-        .admin-menu button { margin: 5px 0; padding: 10px; width: 150px; }
-        .form-container {
-            background: rgba(35,35,62,0.8); border-radius: 15px; padding: 30px;
-            margin: 50px 0; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        }
-        .input-group { position: relative; margin: 15px 0; }
-        .input-group input {
-            width: 100%; padding: 15px 50px 15px 15px; border: none;
-            border-radius: 8px; font-size: 16px; background: #e0e0e6; color: #333;
-        }
-        .scan-icon {
-            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
-            cursor: pointer; color: #1976d2;
-        }
-        .data-table {
-            background: rgba(35,35,62,0.8); padding: 20px; border-radius: 15px;
-            margin: 20px 0; display: none;
-        }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #555; }
-        th { background: rgba(0,0,0,0.3); }
-        .modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); z-index: 2000; display: none;
-            align-items: center; justify-content: center;
-        }
-        .modal-content {
-            background: #333; padding: 30px; border-radius: 10px; text-align: center;
-        }
-        .modal-content button { margin: 10px; padding: 10px 20px; }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>سیستم مدیریت فروش Honor</title>
+<style>
+  body {
+    margin: 0; padding: 20px; font-family: Tahoma, sans-serif; background: linear-gradient(135deg, #0a0a23 0%, #181f3a 50%, #1a164e 100%);
+    color: white; min-height: 100vh;
+  }
+  .admin-icon {
+    position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: rgba(255,255,255,0.16);
+    border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1000;
+    font-size: 24px;
+  }
+  #adminMenu {
+    display: none; position: fixed; top: 80px; right: 20px; background: rgba(20,20,40,0.85); border-radius: 8px;
+    padding: 10px; z-index: 1000; width: 200px;
+  }
+  #adminMenu button {
+    width: 100%; padding: 8px; margin: 6px 0; border: none; border-radius: 6px; background: #3366ff; color: white;
+    font-weight: bold; cursor: pointer;
+  }
+  #dataTable {
+    display: none; margin-top: 20px; background: rgba(35,35,62,0.8); padding: 15px; border-radius: 10px;
+    max-width: 900px; overflow-x: auto;
+  }
+  #dataTable table {
+    width: 100%; border-collapse: collapse;
+  }
+  #dataTable th, #dataTable td {
+    padding: 10px; border: 1px solid #506dadaa; text-align: center;
+  }
+  #dataTable th {
+    background: #1a264a;
+    font-weight: 700;
+  }
+  .input-group {
+    position: relative; margin: 20px 0;
+  }
+  input[type="text"] {
+    width: 100%; padding: 14px 44px 14px 16px; font-size: 16px; border-radius: 10px; border: none;
+    box-shadow: inset 0 0 8px #222; color: #111;
+  }
+  .scan-icon {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 18px; cursor: pointer; color: #1a73e8;
+  }
+  button.submit-btn {
+    width: 100%; padding: 16px; font-size: 18px; background: #4CAF50; border: none; border-radius: 10px; color: white;
+    cursor: pointer; font-weight: bold;
+  }
+</style>
 </head>
 <body>
-    <canvas class="stars" id="stars"></canvas>
-    
-    <div class="admin-icon" onclick="showAdminLogin()">
-        👤
-    </div>
-    
-    <div class="admin-menu" id="adminMenu">
-        <button onclick="loadSalesData()">📊 مشاهده اطلاعات</button>
-        <button onclick="downloadData()">📅 دانلود CSV</button>
-        <button onclick="showDeleteModal()">🗑️ حذف همه داده‌ها</button>
-        <button onclick="logoutAdmin()">🚪 خروج</button>
-    </div>
 
-    <div class="container">
-        <h1 style="text-align: center; margin: 30px 0;">سیستم مدیریت فروش Honor</h1>
-        
-        <div class="form-container">
-            <div class="input-group">
-                <input type="text" id="imei" placeholder="سریال IMEI را وارد یا اسکن کنید">
-                <span class="scan-icon" onclick="alert('اسکن در نسخه آینده')">📷</span>
-            </div>
-            <div class="input-group">
-                <input type="text" id="model" placeholder="مدل گوشی">
-            </div>
-            <div class="input-group">
-                <input type="text" id="city" placeholder="شهر">
-            </div>
-            <div class="input-group">
-                <input type="text" id="phone" placeholder="شماره تماس">
-            </div>
-            <button onclick="submitSale()" style="width: 100%; padding: 15px; background: #4CAF50; color: white; border: none; border-radius: 8px; font-size: 16px;">ثبت فروش</button>
-        </div>
+<div class="admin-icon" id="adminIcon" title="مدیریت">👤</div>
 
-        <div class="data-table" id="dataTable">
-            <h2>اطلاعات فروش</h2>
-            <table id="salesTable">
-                <thead>
-                    <tr><th>IMEI</th><th>مدل</th><th>شهر</th><th>تاریخ</th></tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
+<div id="adminMenu">
+  <button onclick="loadSalesData()">📊 مشاهده اطلاعات</button>
+  <button onclick="downloadData()">📥 دانلود CSV</button>
+  <button onclick="showDeleteModal()">🗑️ حذف همه داده‌ها</button>
+  <button onclick="logoutAdmin()">🚪 خروج</button>
+</div>
 
-    <div class="modal" id="deleteModal">
-        <div class="modal-content">
-            <h3>آیا مطمئن هستید که می‌خواهید همه داده‌ها حذف شوند؟</h3>
-            <button onclick="deleteAllData()" style="background: #f44336; color: white;">بله، حذف کن</button>
-            <button onclick="hideDeleteModal()" style="background: #666; color: white;">انصراف</button>
-        </div>
-    </div>
+<h1 style="text-align:center; margin-top:70px;">ثبت فروش Honor</h1>
 
-    <script>
-        // متغیرهای کلی
-const API_BASE = 'https://honor-sales-worker.farsimen.workers.dev';
+<div style="max-width: 480px; margin: 14px auto;">
+  <div class="input-group">
+    <input type="text" id="imeiInput" placeholder="سریال IMEI را وارد یا اسکن کنید" />
+    <span class="scan-icon" title="اسکن بارکد">📷</span>
+  </div>
+  <div class="input-group">
+    <input type="text" id="modelInput" placeholder="مدل گوشی" />
+  </div>
+  <div class="input-group">
+    <input type="text" id="cityInput" placeholder="شهر" />
+  </div>
+  <div class="input-group">
+    <input type="text" id="phoneInput" placeholder="شماره تماس" />
+  </div>
+  <button class="submit-btn" onclick="submitSale()">ثبت فروش</button>
+</div>
 
-// تابع بررسی لاگین ادمین از localStorage
-function checkAdminLogin() {
-    return localStorage.getItem('adminToken') === 'Honor2025Admin!';
-}
+<div id="dataTable">
+  <h2>اطلاعات فروش</h2>
+  <table>
+    <thead>
+      <tr><th>IMEI</th><th>مدل</th><th>شهر</th><th>تاریخ ثبت</th></tr>
+    </thead>
+    <tbody id="salesTbody"></tbody>
+  </table>
+</div>
 
-// نمایش یا پنهان‌سازی منوی ادمین بر اساس وضعیت
-function toggleAdminMenu() {
-    if (checkAdminLogin()) {
-        document.getElementById('adminMenu').style.display = 'block';
-    } else {
-        document.getElementById('adminMenu').style.display = 'none';
-        // همچنین سایر بخش‌های مربوط به ادمین را مخفی کن در صورت خروج
-        if (document.getElementById('dataTable'))
-            document.getElementById('dataTable').style.display = 'none';
+<div id="deleteModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; z-index:2000;">
+  <div style="background:#222; padding:30px; border-radius:12px; text-align:center; color:#eee;">
+    <p>آیا مطمئن هستید که می خواهید همه داده ها حذف شوند؟</p>
+    <button onclick="deleteAllData()" style="margin-right:10px; padding:10px 20px; background:#ff4444; border:none; border-radius:10px; cursor:pointer;">بله حذف کن</button>
+    <button onclick="hideDeleteModal()" style="padding:10px 20px; background:#666; border:none; border-radius:10px; cursor:pointer;">انصراف</button>
+  </div>
+</div>
+
+<script>
+  const API_BASE = 'https://honor-sales-worker.farsimen.workers.dev';
+
+  // حالت ادمین
+  let isAdminLoggedIn = localStorage.getItem('adminToken') === 'Honor2025Admin!';
+
+  // نمایش/مخفی منوی ادمین بر اساس وضعیت لاگین
+  const adminIcon = document.getElementById('adminIcon');
+  const adminMenu = document.getElementById('adminMenu');
+
+  function toggleAdminMenu() {
+    adminMenu.style.display = isAdminLoggedIn ? 'block' : 'none';
+    if(!isAdminLoggedIn) document.getElementById('dataTable').style.display = 'none';
+  }
+
+  // بارگذاری وضعیت هنگام load
+  window.onload = () => {
+    toggleAdminMenu();
+  };
+
+  // ورود ادمین (رمزعبور در prompt)
+  adminIcon.onclick = () => {
+    if (isAdminLoggedIn) {
+      toggleAdminMenu();
+      return;
     }
-}
+    const pass = prompt('رمز عبور مدیریت را وارد کنید:');
+    if (pass === 'Honor2025Admin!') {
+      localStorage.setItem('adminToken', 'Honor2025Admin!');
+      isAdminLoggedIn = true;
+      toggleAdminMenu();
+      alert('ورود موفقیت‌آمیز!');
+    } else {
+      alert('رمز عبور اشتباه است!');
+    }
+  };
 
-// بررسی وضعیت ادمین هنگام لود صفحه
-window.onload = function() {
-    createStars();
-    toggleAdminMenu();
-};
-
-// هنگام ورود ادمین (بعد از اینکه رمز عبور صحیح وارد شد):
-function adminLoginSuccess() {
-    localStorage.setItem('adminToken', 'Honor2025Admin!');
-    toggleAdminMenu();
-    alert('ورود موفقیت‌آمیز');
-}
-
-// هنگام خروج ادمین:
-function logoutAdmin() {
+  function logoutAdmin(){
     localStorage.removeItem('adminToken');
+    isAdminLoggedIn = false;
     toggleAdminMenu();
     alert('خروج انجام شد');
-}
+  }
 
-        // ایجاد ستاره‌های متحرک
-        function createStars() {
-            const canvas = document.getElementById('stars');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            const stars = [];
-            for(let i = 0; i < 200; i++) {
-                stars.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    radius: Math.random() * 2,
-                    opacity: Math.random()
-                });
-            }
-            
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                stars.forEach(star => {
-                    ctx.beginPath();
-                    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255,255,255,${star.opacity})`;
-                    ctx.fill();
-                    star.opacity += (Math.random() - 0.5) * 0.02;
-                    if(star.opacity < 0) star.opacity = 0;
-                    if(star.opacity > 1) star.opacity = 1;
-                });
-                requestAnimationFrame(animate);
-            }
-            animate();
-        }
+  // ثبت فروش جدید
+  async function submitSale() {
+    const imei = document.getElementById('imeiInput').value.trim();
+    const model = document.getElementById('modelInput').value.trim();
+    const city = document.getElementById('cityInput').value.trim();
+    const phone = document.getElementById('phoneInput').value.trim();
 
-        // ورود ادمین
-        function showAdminLogin() {
-            if (isAdminLoggedIn) {
-                document.getElementById('adminMenu').style.display = 
-                    document.getElementById('adminMenu').style.display === 'block' ? 'none' : 'block';
-                return;
-            }
-            
-            const password = prompt('رمز عبور مدیریت:');
-            if (password === 'Honor2025Admin!') {
-                isAdminLoggedIn = true;
-                localStorage.setItem('adminToken', 'Honor2025Admin!');
-                document.getElementById('adminMenu').style.display = 'block';
-                alert('ورود موفقیت‌آمیز');
-            } else {
-                alert('رمز عبور نادرست');
-            }
-        }
+    if (!imei || imei.length !== 15) {
+      alert('IMEI باید دقیقاً 15 رقم باشد.');
+      return;
+    }
+    if (!model) {
+      alert('مدل گوشی را وارد کنید.');
+      return;
+    }
 
-        // خروج ادمین
-        function logoutAdmin() {
-            isAdminLoggedIn = false;
-            localStorage.removeItem('adminToken');
-            document.getElementById('adminMenu').style.display = 'none';
-            document.getElementById('dataTable').style.display = 'none';
-            alert('خروج انجام شد');
-        }
+    try {
+      const res = await fetch(API_BASE + '/api/sales/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Seller-ID': 'frontend' },
+        body: JSON.stringify({ imei, phone_model: model, city, phone_number: phone, sale_date: new Date().toISOString().split('T')[0] })
+      });
+      const data = await res.json();
+      alert(data.message || 'خطا در ثبت فروش');
+      if (data.success) {
+        document.getElementById('imeiInput').value = '';
+        document.getElementById('modelInput').value = '';
+        document.getElementById('cityInput').value = '';
+        document.getElementById('phoneInput').value = '';
+      }
+    } catch(e) {
+      alert('خطای شبکه: ' + e.message);
+    }
+  }
 
-        // بارگذاری اطلاعات فروش - رفع مشکل خطا
-        async function loadSalesData() {
-            if (!isAdminLoggedIn) return alert('ورود ادمین لازم است');
-            
-            try {
-                const response = await fetch(`${API_BASE}/api/sales/data`, {
-                    headers: { 
-                        'X-Admin-Password': 'Honor2025Admin!',
-                        'Authorization': 'Bearer Honor2025Admin!'
-                    }
-                });
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('API Error:', errorText);
-                    throw new Error(`HTTP ${response.status}: خطا در ارتباط با سرور`);
-                }
-                
-                const result = await response.json();
-                const tbody = document.querySelector('#salesTable tbody');
-                tbody.innerHTML = '';
-                
-                if (result.data && result.data.length > 0) {
-                    result.data.forEach(row => {
-                        tbody.innerHTML += `
-                            <tr>
-                                <td>${row.imei}</td>
-                                <td>${row.phone_model}</td>
-                                <td>${row.city || '-'}</td>
-                                <td>${new Date(row.created_at).toLocaleDateString('fa-IR')}</td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    tbody.innerHTML = '<tr><td colspan="4">داده‌ای موجود نیست</td></tr>';
-                }
-                
-                document.getElementById('dataTable').style.display = 'block';
-            } catch (error) {
-                console.error('Load data error:', error);
-                alert('خطا در بارگذاری اطلاعات: ' + error.message);
-            }
-        }
+  // بارگذاری اطلاعات فروش
+  async function loadSalesData() {
+    if (!isAdminLoggedIn) {
+      alert('ابتدا به عنوان ادمین وارد شوید!');
+      return;
+    }
+    try {
+      const res = await fetch(API_BASE + '/api/sales/data', {
+        headers: { 'Authorization': 'Bearer Honor2025Admin!' }
+      });
+      if(!res.ok) throw new Error('خطا در دریافت اطلاعات');
+      const result = await res.json();
+      const tbody = document.getElementById('salesTbody');
+      tbody.innerHTML = '';
+      if(result.data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4">داده‌ای موجود نیست</td></tr>';
+      } else {
+        result.data.forEach(row => {
+          tbody.innerHTML += `<tr>
+            <td>${row.imei}</td>
+            <td>${row.phone_model}</td>
+            <td>${row.city || '-'}</td>
+            <td>${new Date(row.created_at).toLocaleDateString('fa-IR')}</td>
+          </tr>`;
+        });
+      }
+      document.getElementById('dataTable').style.display = 'block';
+    } catch(e) {
+      alert('خطا در بارگذاری داده‌ها: ' + e.message);
+    }
+  }
 
-        // دانلود فایل CSV - رفع مشکل خطا
-        async function downloadData() {
-            if (!isAdminLoggedIn) return alert('ورود ادمین لازم است');
-            
-            try {
-                const response = await fetch(`${API_BASE}/api/admin/export`, {
-                    headers: { 
-                        'X-Admin-Password': 'Honor2025Admin!',
-                        'Authorization': 'Bearer Honor2025Admin!'
-                    }
-                });
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Download Error:', errorText);
-                    throw new Error(`HTTP ${response.status}: خطا در ارتباط با سرور`);
-                }
-                
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'honor_sales.csv';
-                a.click();
-                window.URL.revokeObjectURL(url);
-                alert('فایل دانلود شد');
-            } catch (error) {
-                console.error('Download error:', error);
-                alert('خطا در دانلود: ' + error.message);
-            }
-        }
+  // دانلود CSV
+  async function downloadData() {
+    if(!isAdminLoggedIn){
+      alert('ابتدا به عنوان ادمین وارد شوید!');
+      return;
+    }
+    try{
+      const res = await fetch(API_BASE + '/api/sales/export', {
+        headers: { 'Authorization': 'Bearer Honor2025Admin!' }
+      });
+      if(!res.ok) throw new Error('خطا در دانلود فایل');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'honor_sales_export.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch(e){
+      alert('خطا در دانلود: ' + e.message);
+    }
+  }
 
-        // نمایش مودال حذف
-        function showDeleteModal() {
-            if (!isAdminLoggedIn) return alert('ورود ادمین لازم است');
-            document.getElementById('deleteModal').style.display = 'flex';
-        }
+  // نمایش/مخفی مودال حذف داده‌ها
+  function showDeleteModal() {
+    if(!isAdminLoggedIn){
+      alert('ابتدا به عنوان ادمین وارد شوید!');
+      return;
+    }
+    document.getElementById('deleteModal').style.display = 'flex';
+  }
+  function hideDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+  }
 
-        // مخفی کردن مودال حذف
-        function hideDeleteModal() {
-            document.getElementById('deleteModal').style.display = 'none';
-        }
+  // حذف همه داده‌ها
+  async function deleteAllData() {
+    try {
+      const res = await fetch(API_BASE + '/api/admin/delete-all', {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Bearer Honor2025Admin!' }
+      });
+      if(!res.ok) throw new Error('خطا در حذف داده‌ها');
+      alert('تمام داده‌ها حذف شدند');
+      hideDeleteModal();
+      document.getElementById('dataTable').style.display = 'none';
+    } catch(e) {
+      alert('خطا در حذف: ' + e.message);
+    }
+  }
+</script>
 
-        // حذف همه داده‌ها - رفع مشکل خطا
-        async function deleteAllData() {
-            try {
-                const response = await fetch(`${API_BASE}/api/admin/clear`, {
-                    method: 'DELETE',
-                    headers: { 
-                        'X-Admin-Password': 'Honor2025Admin!',
-                        'Authorization': 'Bearer Honor2025Admin!'
-                    }
-                });
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Delete Error:', errorText);
-                    throw new Error(`HTTP ${response.status}: خطا در ارتباط با سرور`);
-                }
-                
-                const result = await response.json();
-                alert('همه داده‌ها حذف شدند');
-                hideDeleteModal();
-                document.getElementById('dataTable').style.display = 'none';
-            } catch (error) {
-                console.error('Delete error:', error);
-                alert('خطا در حذف: ' + error.message);
-            }
-        }
-
-        // ثبت فروش
-        async function submitSale() {
-            const imei = document.getElementById('imei').value;
-            const model = document.getElementById('model').value;
-            const city = document.getElementById('city').value;
-            const phone = document.getElementById('phone').value;
-            
-            if (!imei || imei.length !== 15) return alert('IMEI باید 15 رقم باشد');
-            if (!model) return alert('مدل گوشی را وارد کنید');
-            
-            try {
-                const response = await fetch(`${API_BASE}/api/sales/register`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'X-Seller-ID': 'seller-001'
-                    },
-                    body: JSON.stringify({
-                        imei, 
-                        phone_model: model, 
-                        city, 
-                        phone_number: phone,
-                        sale_date: new Date().toISOString().split('T')[0]
-                    })
-                });
-                
-                const result = await response.json();
-                alert(result.message);
-                
-                if (result.success) {
-                    document.getElementById('imei').value = '';
-                    document.getElementById('model').value = '';
-                    document.getElementById('city').value = '';
-                    document.getElementById('phone').value = '';
-                }
-            } catch (error) {
-                console.error('Submit error:', error);
-                alert('خطا در ثبت: ' + error.message);
-            }
-        }
-    </script>
 </body>
 </html>
