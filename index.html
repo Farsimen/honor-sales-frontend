@@ -167,7 +167,7 @@
     font-size: 14px;
   }
   
-  input[type="text"] {
+  input[type="text"], input[type="date"], select {
     width: 100%;
     padding: 16px 50px 16px 20px;
     font-size: 17px;
@@ -181,7 +181,7 @@
     box-shadow: 0 2px 8px rgba(34,34,34,0.1);
   }
   
-  input[type="text"]:focus {
+  input[type="text"]:focus, input[type="date"]:focus, select:focus {
     outline: none;
     border-color: #3995e7;
     background: rgba(255,255,255,0.98);
@@ -191,6 +191,32 @@
   
   input[type="text"]::placeholder {
     color: #666;
+  }
+  
+  /* Date Input Styles */
+  input[type="date"] {
+    padding: 16px 20px;
+    direction: ltr;
+  }
+  
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    background: url('📅') no-repeat center;
+    background-size: 16px;
+    cursor: pointer;
+  }
+  
+  .date-display {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #666;
+    pointer-events: none;
+    background: rgba(255,255,255,0.9);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
   }
   
   .scan-icon {
@@ -514,12 +540,12 @@
   }
   
   /* Input validation styles */
-  input[type="text"].error {
+  input[type="text"].error, input[type="date"].error {
     border-color: #ff4757;
     background: rgba(255,71,87,0.1);
   }
   
-  input[type="text"].success {
+  input[type="text"].success, input[type="date"].success {
     border-color: #2ed573;
   }
   
@@ -580,6 +606,12 @@
       <input type="text" id="phoneInput" placeholder="09xxxxxxxxx" maxlength="11" />
     </div>
     
+    <div class="input-group">
+      <label class="input-label">تاریخ ثبت فروش</label>
+      <input type="date" id="dateInput" />
+      <span class="date-display" id="dateDisplay"></span>
+    </div>
+    
     <button class="submit-btn" onclick="submitSale()" id="submitBtn">
       <span id="submitText">ثبت فروش</span>
       <div class="loading" id="loading">
@@ -627,6 +659,120 @@
   const adminIcon = document.getElementById('adminIcon');
   const adminMenu = document.getElementById('adminMenu');
 
+  // تابع تبدیل تاریخ میلادی به شمسی
+  function gregorianToJalali(gy, gm, gd) {
+    const g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    let jy, jm, jd, gy2, days;
+    
+    if (gy <= 1600) {
+      jy = 0; gy -= 621;
+    } else {
+      jy = 979; gy -= 1600; gy2 = (gy > 2) ? (gy + 1) : gy;
+    }
+    
+    days = (365 * gy) + ((gy2 + 3) >> 2) + g_d_m[gm - 1] + gd;
+    if ((gm > 2) && (((gy % 4) === 0) && (((gy % 100) !== 0) || ((gy % 400) === 0)))) ++days;
+    jy += 33 * (days >> 12053);
+    days %= 12053;
+    jy += 4 * (days >> 1461);
+    days %= 1461;
+    if (days > 365) {
+      jy += ((days - 1) >> 365);
+      days = (days - 1) % 365;
+    }
+    
+    if (days < 186) {
+      jm = 1 + (days >> 31);
+      jd = 1 + (days % 31);
+    } else {
+      jm = 7 + ((days - 186) >> 30);
+      jd = 1 + ((days - 186) % 30);
+    }
+    
+    return { year: jy, month: jm, day: jd };
+  }
+
+  // تابع تبدیل تاریخ شمسی به میلادی
+  function jalaliToGregorian(jy, jm, jd) {
+    let gy, gm, gd2, days;
+    
+    if (jy <= 979) {
+      gy = 1600; jy -= 979;
+    } else {
+      gy = 621; jy -= 979;
+    }
+    
+    if (jm < 7) {
+      days = (jm - 1) * 31;
+    } else {
+      days = (jm - 7) * 30 + 186;
+    }
+    days += (365 * jy) + ((jy >> 2)) + jd - 1;
+    
+    gy += 400 * (days >> 146097);
+    days %= 146097;
+    
+    if (days >= 36525) {
+      days--;
+      gy += 100 * (days >> 36524);
+      days %= 36524;
+      if (days >= 365) days++;
+    }
+    
+    gy += 4 * (days >> 1461);
+    days %= 1461;
+    
+    if (days >= 366) {
+      days--;
+      gy += (days >> 365);
+      days = days % 365;
+    }
+    
+    gd2 = days + 1;
+    
+    const sal_a = [0, 31, ((gy % 4 === 0 && gy % 100 !== 0) || (gy % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    gm = 0;
+    while (gm < 13 && gd2 > sal_a[gm]) {
+      gd2 -= sal_a[gm++];
+    }
+    
+    return { year: gy, month: gm, day: gd2 };
+  }
+
+  // تابع نمایش تاریخ شمسی
+  function displayJalaliDate(gregorianDate) {
+    if (!gregorianDate) return '';
+    
+    const date = new Date(gregorianDate);
+    const jalali = gregorianToJalali(date.getFullYear(), date.getMonth() + 1, date.getDate());
+    
+    const monthNames = [
+      'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+      'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
+    ];
+    
+    return `${jalali.day} ${monthNames[jalali.month - 1]} ${jalali.year}`;
+  }
+
+  // تنظیم تاریخ پیش‌فرض و نمایش
+  function initializeDateInput() {
+    const dateInput = document.getElementById('dateInput');
+    const dateDisplay = document.getElementById('dateDisplay');
+    
+    // تنظیم تاریخ امروز
+    const today = new Date();
+    const todayString = today.toISOString().split('T')[0];
+    dateInput.value = todayString;
+    
+    // نمایش تاریخ شمسی
+    dateDisplay.textContent = displayJalaliDate(todayString);
+    
+    // رویداد تغییر تاریخ
+    dateInput.addEventListener('change', (e) => {
+      dateDisplay.textContent = displayJalaliDate(e.target.value);
+    });
+  }
+
   function toggleAdminMenu() {
     if (adminMenu.style.display === 'block') {
       adminMenu.style.display = 'none';
@@ -641,6 +787,7 @@
     if (isAdminLoggedIn) {
       adminIcon.classList.add('admin-logged');
     }
+    initializeDateInput();
   };
 
   // بستن منو با کلیک خارج از آن
@@ -714,10 +861,12 @@
     const model = document.getElementById('modelInput').value.trim();
     const city = document.getElementById('cityInput').value.trim();
     const phone = document.getElementById('phoneInput').value.trim();
+    const saleDate = document.getElementById('dateInput').value;
 
     // اعتبارسنجی
     const imeiInput = document.getElementById('imeiInput');
     const modelInput = document.getElementById('modelInput');
+    const dateInput = document.getElementById('dateInput');
 
     if (!imei || imei.length !== 15) {
       validateField(imeiInput, false);
@@ -734,6 +883,14 @@
       return;
     }
     validateField(modelInput, true);
+
+    if (!saleDate) {
+      validateField(dateInput, false);
+      showToast('تاریخ ثبت فروش را انتخاب کنید.', 'error');
+      dateInput.focus();
+      return;
+    }
+    validateField(dateInput, true);
 
     // نمایش لودینگ
     const submitBtn = document.getElementById('submitBtn');
@@ -756,7 +913,7 @@
           phone_model: model, 
           city, 
           phone_number: phone, 
-          sale_date: new Date().toISOString().split('T')[0] 
+          sale_date: saleDate
         })
       });
       
@@ -770,8 +927,14 @@
         document.getElementById('cityInput').value = '';
         document.getElementById('phoneInput').value = '';
         
+        // تنظیم مجدد تاریخ امروز
+        const today = new Date();
+        const todayString = today.toISOString().split('T')[0];
+        document.getElementById('dateInput').value = todayString;
+        document.getElementById('dateDisplay').textContent = displayJalaliDate(todayString);
+        
         // حذف کلاس‌های validation
-        document.querySelectorAll('input[type="text"]').forEach(input => {
+        document.querySelectorAll('input[type="text"], input[type="date"]').forEach(input => {
           input.classList.remove('error', 'success');
         });
       } else {
@@ -809,8 +972,7 @@
         tbody.innerHTML = '<tr><td colspan="5">داده‌ای موجود نیست</td></tr>';
       } else {
         result.data.forEach(row => {
-          const date = new Date(row.created_at);
-          const persianDate = date.toLocaleDateString('fa-IR');
+          const persianDate = displayJalaliDate(row.sale_date || row.created_at);
           tbody.innerHTML += `<tr>
             <td>${row.imei}</td>
             <td>${row.phone_model}</td>
