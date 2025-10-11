@@ -87,6 +87,16 @@
     font-size: 14px;
   }
 
+  .scanner-help {
+    background: rgba(255,193,7,0.1);
+    border: 1px solid rgba(255,193,7,0.3);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 15px;
+    font-size: 13px;
+    color: #ffc107;
+  }
+
   #qr-reader {
     border-radius: 15px;
     overflow: hidden;
@@ -96,19 +106,21 @@
 
   .scanner-controls {
     display: flex;
-    gap: 15px;
+    gap: 10px;
     justify-content: center;
     margin-top: 20px;
+    flex-wrap: wrap;
   }
 
   .scanner-btn {
-    padding: 12px 24px;
+    padding: 10px 16px;
     border: none;
     border-radius: 12px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     font-family: inherit;
+    font-size: 13px;
   }
 
   .scanner-btn.primary {
@@ -121,6 +133,12 @@
     background: rgba(255,255,255,0.2);
     color: white;
     box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+  }
+
+  .scanner-btn.warning {
+    background: linear-gradient(45deg, #ffc107, #ffb300);
+    color: #000;
+    box-shadow: 0 4px 15px rgba(255,193,7,0.3);
   }
 
   .scanner-btn:hover {
@@ -602,7 +620,7 @@
     border: 1px solid rgba(255,255,255,0.2);
     padding: 25px;
     border-radius: 20px;
-    max-width: 900px;
+    max-width: 1000px;
     overflow-x: auto;
     box-shadow: 0 25px 50px rgba(0,0,0,0.4), 0 0 30px rgba(255,255,255,0.1);
     animation: tableSlide 0.5s ease;
@@ -636,10 +654,11 @@
   
   #dataTable th,
   #dataTable td {
-    padding: 12px 15px;
+    padding: 10px 8px;
     border: 1px solid rgba(255,255,255,0.2);
     text-align: center;
     transition: all 0.3s ease;
+    font-size: 13px;
   }
   
   #dataTable th {
@@ -846,8 +865,8 @@
     
     #dataTable th,
     #dataTable td {
-      padding: 8px 10px;
-      font-size: 14px;
+      padding: 6px 4px;
+      font-size: 11px;
     }
     
     .modal-content {
@@ -872,6 +891,11 @@
     .scanner-container {
       padding: 20px;
       margin: 10px;
+    }
+    
+    .scanner-controls {
+      flex-direction: column;
+      gap: 8px;
     }
   }
   
@@ -927,13 +951,17 @@
 <div class="scanner-modal" id="scannerModal">
   <div class="scanner-container">
     <div class="scanner-header">
-      <h3>📱 اسکنر QR Code</h3>
-      <p>دوربین خود را روی برچسب QR Code گوشی نگه دارید</p>
+      <h3>📱 اسکنر بارکد پیشرفته</h3>
+      <p>دوربین را نزدیک لیبل قرار دهید</p>
+    </div>
+    <div class="scanner-help">
+      💡 برای اسکن بهتر: نور کافی، دوربین ثابت، فاصله 5-15 سانتی
     </div>
     <div id="qr-reader" style="width: 100%; max-width: 400px; margin: 0 auto;"></div>
     <div class="scanner-controls">
       <button class="scanner-btn secondary" onclick="stopScanner()">❌ بستن</button>
-      <button class="scanner-btn primary" id="switchCamera" onclick="switchCamera()">🔄 تغییر دوربین</button>
+      <button class="scanner-btn primary" id="switchCamera" onclick="switchCamera()">🔄 دوربین</button>
+      <button class="scanner-btn warning" id="torchBtn" onclick="toggleTorch()" style="display: none;">🔦 فلش</button>
     </div>
   </div>
 </div>
@@ -993,9 +1021,9 @@
     </div>
     
     <div class="input-group">
-      <label class="input-label">تاریخ ثبت فروش</label>
+      <label class="input-label">تاریخ ثبت فروش (شمسی)</label>
       <div class="date-picker-container">
-        <input type="text" id="dateInput" class="date-picker-input" placeholder="تاریخ را انتخاب کنید" readonly />
+        <input type="text" id="dateInput" class="date-picker-input" placeholder="تاریخ شمسی را انتخاب کنید" readonly />
         <div class="date-picker-calendar" id="datePickerCalendar">
           <div class="date-picker-header">
             <button type="button" class="nav-button" id="prevMonth">‹</button>
@@ -1024,12 +1052,13 @@
   <table>
     <thead>
       <tr>
+        <th>ردیف</th>
         <th>نام فروشگاه</th>
         <th>IMEI</th>
         <th>مدل</th>
         <th>شهر</th>
-        <th>شماره تماس</th>
-        <th>تاریخ ثبت</th>
+        <th>تماس</th>
+        <th>تاریخ شمسی</th>
       </tr>
     </thead>
     <tbody id="salesTbody"></tbody>
@@ -1058,100 +1087,75 @@
   const adminIcon = document.getElementById('adminIcon');
   const adminMenu = document.getElementById('adminMenu');
 
-  // QR Scanner variables
+  // QR Scanner variables - بهبود یافته برای لیبل‌های کوچک
   let html5QrcodeScanner = null;
   let currentCameraId = null;
   let cameras = [];
+  let torchEnabled = false;
 
-  // تابع تبدیل تاریخ میلادی به شمسی (اصلاح شده کاملاً صحیح)
+  // ✅ تابع تبدیل تاریخ میلادی به شمسی (دقیق و صحیح)
   function gregorianToJalali(gy, gm, gd) {
     const g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-    let jy, jm, jd2, gy2, days;
+    let jy = (gy > 1600) ? 979 : 0;
+    gy = (gy > 1600) ? gy - 1600 : gy - 621;
+    if (gm > 2) gy++;
     
-    if (gy <= 1600) {
-      jy = 0; 
-      gy -= 621;
-    } else {
-      jy = 979; 
-      gy -= 1600; 
-      gy2 = (gy > 2) ? (gy + 1) : gy;
-    }
-    
-    days = (365 * gy) + ((gy2 + 3) >> 2) + g_d_m[gm - 1] + gd;
-    if ((gm > 2) && (((gy % 4) === 0) && (((gy % 100) !== 0) || ((gy % 400) === 0)))) ++days;
-    
-    jy += 33 * (days >> 12053);
+    let days = 365 * gy + Math.floor((gy + 3) / 4) - Math.floor((gy + 99) / 100) + Math.floor((gy + 399) / 400) - 80 + gd + g_d_m[gm - 1];
+    jy += 33 * Math.floor(days / 12053);
     days %= 12053;
-    jy += 4 * (days >> 1461);
+    jy += 4 * Math.floor(days / 1461);
     days %= 1461;
-    
     if (days > 365) {
-      jy += ((days - 1) >> 365);
+      jy += Math.floor((days - 1) / 365);
       days = (days - 1) % 365;
     }
     
+    let jm, jd;
     if (days < 186) {
-      jm = 1 + (days >> 31);
-      jd2 = 1 + (days % 31);
+      jm = 1 + Math.floor(days / 31);
+      jd = 1 + (days % 31);
     } else {
-      jm = 7 + ((days - 186) >> 30);
-      jd2 = 1 + ((days - 186) % 30);
+      jm = 7 + Math.floor((days - 186) / 30);
+      jd = 1 + ((days - 186) % 30);
     }
     
-    // اصلاح سال: اضافه کردن 1404 - 979 = 425
-    return { year: jy + 425, month: jm, day: jd2 };
+    return { year: jy, month: jm, day: jd };
   }
 
-  // تابع تبدیل تاریخ شمسی به میلادی (اصلاح شده کاملاً صحیح)
+  // ✅ تابع تبدیل تاریخ شمسی به میلادی (دقیق و صحیح)
   function jalaliToGregorian(jy, jm, jd) {
-    // اصلاح سال: کم کردن 425 برای تبدیل صحیح
-    jy = jy - 425;
+    let gy = (jy > 979) ? 1600 : 621;
+    jy = (jy > 979) ? jy - 979 : jy;
     
-    let gy, gm, gd2, days;
+    let days = 365 * jy + Math.floor(jy / 33) * 8 + Math.floor(((jy % 33) + 3) / 4) + 78 + jd;
+    if (jm < 7) days += (jm - 1) * 31;
+    else days += (jm - 7) * 30 + 186;
     
-    if (jy <= 979) {
-      gy = 1600; 
-      jy -= 979;
-    } else {
-      gy = 621; 
-      jy -= 979;
-    }
-    
-    if (jm < 7) {
-      days = (jm - 1) * 31;
-    } else {
-      days = (jm - 7) * 30 + 186;
-    }
-    days += (365 * jy) + ((jy >> 2)) + jd - 1;
-    
-    gy += 400 * (days >> 146097);
+    gy += 400 * Math.floor(days / 146097);
     days %= 146097;
-    
-    if (days >= 36525) {
+    if (days > 36524) {
       days--;
-      gy += 100 * (days >> 36524);
+      gy += 100 * Math.floor(days / 36524);
       days %= 36524;
       if (days >= 365) days++;
     }
     
-    gy += 4 * (days >> 1461);
+    gy += 4 * Math.floor(days / 1461);
     days %= 1461;
-    
-    if (days >= 366) {
-      days--;
-      gy += (days >> 365);
-      days = days % 365;
+    if (days > 365) {
+      gy += Math.floor((days - 1) / 365);
+      days = (days - 1) % 365;
     }
     
-    gd2 = days + 1;
-    
-    const sal_a = [0, 31, ((gy % 4 === 0 && gy % 100 !== 0) || (gy % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    gm = 0;
-    while (gm < 13 && gd2 > sal_a[gm]) {
-      gd2 -= sal_a[gm++];
+    let gd = days + 1;
+    let sal_a = [0, 31, (gy % 4 === 0 && gy % 100 !== 0) || (gy % 400 === 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    let gm = 0;
+    while (gm < 13 && gd > sal_a[gm]) {
+      gd -= sal_a[gm];
+      gm++;
     }
     
-    return { year: gy, month: gm, day: gd2 };
+    return { year: gy, month: gm, day: gd };
   }
 
   // نام ماه‌های فارسی
@@ -1167,7 +1171,7 @@
   let currentJalaliYear, currentJalaliMonth;
   let selectedDate = null;
 
-  // تنظیم تقویم شمسی
+  // ✅ تنظیم تقویم شمسی
   function initializeDatePicker() {
     const dateInput = document.getElementById('dateInput');
     const calendar = document.getElementById('datePickerCalendar');
@@ -1176,7 +1180,7 @@
     const prevMonthBtn = document.getElementById('prevMonth');
     const nextMonthBtn = document.getElementById('nextMonth');
 
-    // تنظیم تاریخ امروز
+    // تنظیم تاریخ امروز به شمسی
     const today = new Date();
     const todayJalali = gregorianToJalali(today.getFullYear(), today.getMonth() + 1, today.getDate());
     
@@ -1184,7 +1188,7 @@
     currentJalaliMonth = todayJalali.month;
     selectedDate = todayJalali;
 
-    // نمایش تاریخ امروز
+    // نمایش تاریخ امروز شمسی
     updateDateInput();
 
     // پر کردن selector ماه‌ها
@@ -1322,11 +1326,12 @@
     }
   }
 
-  // Enhanced Star Field Canvas Animation
+  // Enhanced Star Field Canvas Animation - بهبود یافته برای موبایل
   function createStarFieldCanvas() {
     const canvas = document.getElementById('starCanvas');
     const ctx = canvas.getContext('2d');
     let animationId;
+    const isMobile = window.innerWidth <= 768;
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -1334,25 +1339,33 @@
     }
 
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      createStars();
+    });
 
     const stars = [];
-    const numStars = 800;
-    const speed = 2;
+    const numStars = isMobile ? 100 : 200;
+    const speed = isMobile ? 1 : 1.5;
 
-    // Create stars
-    for (let i = 0; i < numStars; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        z: Math.random() * 1000,
-        prevX: 0,
-        prevY: 0
-      });
+    function createStars() {
+      stars.length = 0;
+      for (let i = 0; i < numStars; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          z: Math.random() * 1000 + 1,
+          prevX: 0,
+          prevY: 0,
+          opacity: Math.random() * 0.7 + 0.3,
+          twinkle: Math.random() * 0.02 + 0.01,
+          twinkleDirection: Math.random() > 0.5 ? 1 : -1
+        });
+      }
     }
 
     function animate() {
-      ctx.fillStyle = 'rgba(10, 10, 10, 0.1)';
+      ctx.fillStyle = 'rgba(10, 10, 10, 0.08)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const centerX = canvas.width / 2;
@@ -1370,32 +1383,35 @@
         const x = (star.x - centerX) * (1000 / star.z) + centerX;
         const y = (star.y - centerY) * (1000 / star.z) + centerY;
 
-        const size = (1000 - star.z) / 1000 * 3;
-        const opacity = (1000 - star.z) / 1000;
+        const size = Math.max(0.5, (1000 - star.z) / 1000 * (isMobile ? 2 : 3));
+        let opacity = (1000 - star.z) / 1000 * star.opacity;
+
+        // Twinkle effect
+        star.opacity += star.twinkle * star.twinkleDirection;
+        if (star.opacity >= 1) star.twinkleDirection = -1;
+        if (star.opacity <= 0.3) star.twinkleDirection = 1;
+
+        if (x < -10 || x > canvas.width + 10 || y < -10 || y > canvas.height + 10) {
+          continue;
+        }
 
         // Draw star
         ctx.beginPath();
         ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
+        ctx.shadowBlur = size;
         ctx.arc(x, y, size, 0, Math.PI * 2);
         ctx.fill();
-
-        // Draw trail
-        if (star.prevX && star.prevY) {
-          ctx.beginPath();
-          ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.5})`;
-          ctx.lineWidth = size / 2;
-          ctx.moveTo(star.prevX, star.prevY);
-          ctx.lineTo(x, y);
-          ctx.stroke();
-        }
 
         star.prevX = x;
         star.prevY = y;
       }
 
+      ctx.shadowBlur = 0;
       animationId = requestAnimationFrame(animate);
     }
 
+    createStars();
     animate();
 
     return () => {
@@ -1405,24 +1421,40 @@
     };
   }
 
-  // QR Scanner Functions
+  // ✅ QR Scanner Functions - بهبود یافته برای لیبل‌های کوچک با زوم و فلش
   async function startScanner() {
     try {
       document.getElementById('scannerModal').style.display = 'flex';
       
-      // Get available cameras
       cameras = await Html5Qrcode.getCameras();
       
       if (cameras && cameras.length) {
-        currentCameraId = cameras[0].id;
+        // انتخاب دوربین عقب (بهتر برای اسکن)
+        const backCamera = cameras.find(camera => 
+          camera.label && (camera.label.toLowerCase().includes('back') || 
+                          camera.label.toLowerCase().includes('rear') ||
+                          camera.label.toLowerCase().includes('environment'))
+        ) || cameras[cameras.length - 1]; // آخرین دوربین معمولاً عقب است
+        
+        currentCameraId = backCamera.id;
         
         html5QrcodeScanner = new Html5Qrcode("qr-reader");
         
+        // تنظیمات بهینه برای لیبل‌های کوچک با زوم
         const config = {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
+          fps: 20, // FPS بالاتر برای دقت بیشتر
+          qrbox: function(viewfinderWidth, viewfinderHeight) {
+            // جعبه اسکن کوچک‌تر و دقیق‌تر
+            const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+            const qrboxSize = Math.floor(minEdge * 0.7);
+            return {
+              width: qrboxSize,
+              height: Math.floor(qrboxSize * 0.6) // باریک‌تر برای بارکد
+            };
+          },
           aspectRatio: 1.0,
           disableFlip: false,
+          // فرمت‌های مختلف بارکد
           formatsToSupport: [
             Html5QrcodeSupportedFormats.QR_CODE,
             Html5QrcodeSupportedFormats.CODE_128,
@@ -1430,29 +1462,60 @@
             Html5QrcodeSupportedFormats.EAN_13,
             Html5QrcodeSupportedFormats.EAN_8,
             Html5QrcodeSupportedFormats.UPC_A,
-            Html5QrcodeSupportedFormats.UPC_E
-          ]
+            Html5QrcodeSupportedFormats.UPC_E,
+            Html5QrcodeSupportedFormats.CODE_93
+          ],
+          // تنظیمات دوربین برای کیفیت بالا و زوم
+          videoConstraints: {
+            facingMode: "environment", // دوربین عقب
+            width: { ideal: 1920, max: 4096 },
+            height: { ideal: 1080, max: 2160 },
+            advanced: [
+              { zoom: 1.5 }, // زوم برای لیبل‌های کوچک
+              { focusMode: "continuous" },
+              { exposureMode: "continuous" },
+              { whiteBalanceMode: "continuous" }
+            ]
+          },
+          // حساسیت بالا برای لیبل‌های کوچک
+          experimentalFeatures: {
+            useBarCodeDetectorIfSupported: true
+          }
         };
 
         await html5QrcodeScanner.start(
-          currentCameraId,
+          { facingMode: "environment" }, // استفاده از دوربین عقب
           config,
           (decodedText, decodedResult) => {
-            // Success callback
-            document.getElementById('imeiInput').value = decodedText;
-            validateField(document.getElementById('imeiInput'), decodedText.length === 15);
+            console.log('کد اسکن شد:', decodedText);
+            // پاک کردن فضاهای خالی و کاراکترهای غیرضروری
+            const cleanedText = decodedText.trim().replace(/[^\d]/g, '');
+            document.getElementById('imeiInput').value = cleanedText;
+            validateField(document.getElementById('imeiInput'), cleanedText.length === 15);
             stopScanner();
-            showToast('کد با موفقیت اسکن شد!', 'success');
+            showToast('کد با موفقیت اسکن شد! ✅', 'success');
           },
           (errorMessage) => {
-            // Error callback - ignore continuous scanning errors
+            // خطاهای پیوسته اسکن را نادیده می‌گیریم
           }
         );
 
-        // Update switch camera button visibility
-        document.getElementById('switchCamera').style.display = cameras.length > 1 ? 'block' : 'none';
+        // نمایش دکمه‌های کنترل
+        document.getElementById('switchCamera').style.display = cameras.length > 1 ? 'inline-block' : 'none';
+        
+        // بررسی پشتیبانی از فلش
+        try {
+          const track = html5QrcodeScanner.getRunningTrackCameraCapabilities();
+          if (track && track.torch) {
+            document.getElementById('torchBtn').style.display = 'inline-block';
+          }
+        } catch (e) {
+          // فلش پشتیبانی نمی‌شود
+          console.log('Torch not supported:', e);
+        }
+
       } else {
-        showToast('دوربین در دسترس نیست!', 'error');
+        showToast('دوربین در دسترس نیست! ❌', 'error');
         stopScanner();
       }
     } catch (err) {
@@ -1466,12 +1529,15 @@
     try {
       if (html5QrcodeScanner) {
         await html5QrcodeScanner.stop();
+        html5QrcodeScanner.clear();
         html5QrcodeScanner = null;
+        torchEnabled = false;
       }
     } catch (err) {
       console.error('Error stopping scanner:', err);
     }
     document.getElementById('scannerModal').style.display = 'none';
+    document.getElementById('torchBtn').style.display = 'none';
   }
 
   async function switchCamera() {
@@ -1480,17 +1546,20 @@
     try {
       if (html5QrcodeScanner) {
         await html5QrcodeScanner.stop();
+        html5QrcodeScanner.clear();
       }
       
-      // Switch to next camera
       const currentIndex = cameras.findIndex(camera => camera.id === currentCameraId);
       const nextIndex = (currentIndex + 1) % cameras.length;
       currentCameraId = cameras[nextIndex].id;
       
-      // Restart with new camera
       const config = {
-        fps: 10,
-        qrbox: { width: 250, height: 250 },
+        fps: 20,
+        qrbox: function(viewfinderWidth, viewfinderHeight) {
+          const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+          const qrboxSize = Math.floor(minEdge * 0.7);
+          return { width: qrboxSize, height: Math.floor(qrboxSize * 0.6) };
+        },
         aspectRatio: 1.0,
         disableFlip: false,
         formatsToSupport: [
@@ -1501,25 +1570,50 @@
           Html5QrcodeSupportedFormats.EAN_8,
           Html5QrcodeSupportedFormats.UPC_A,
           Html5QrcodeSupportedFormats.UPC_E
-        ]
+        ],
+        videoConstraints: {
+          advanced: [{ zoom: 1.5 }]
+        }
       };
 
+      html5QrcodeScanner = new Html5Qrcode("qr-reader");
       await html5QrcodeScanner.start(
         currentCameraId,
         config,
         (decodedText, decodedResult) => {
-          document.getElementById('imeiInput').value = decodedText;
-          validateField(document.getElementById('imeiInput'), decodedText.length === 15);
+          const cleanedText = decodedText.trim().replace(/[^\d]/g, '');
+          document.getElementById('imeiInput').value = cleanedText;
+          validateField(document.getElementById('imeiInput'), cleanedText.length === 15);
           stopScanner();
-          showToast('کد با موفقیت اسکن شد!', 'success');
+          showToast('کد با موفقیت اسکن شد! ✅', 'success');
         },
-        (errorMessage) => {
-          // Error callback - ignore
-        }
+        (errorMessage) => {}
       );
+      
+      showToast('دوربین تغییر یافت 📷', 'success');
     } catch (err) {
       console.error('Error switching camera:', err);
       showToast('خطا در تغییر دوربین: ' + err.message, 'error');
+    }
+  }
+
+  // فعال/غیرفعال کردن فلش
+  async function toggleTorch() {
+    try {
+      if (html5QrcodeScanner) {
+        const track = html5QrcodeScanner.getRunningTrackCameraCapabilities();
+        if (track && track.torch) {
+          await html5QrcodeScanner.applyVideoConstraints({
+            advanced: [{ torch: !torchEnabled }]
+          });
+          torchEnabled = !torchEnabled;
+          document.getElementById('torchBtn').textContent = torchEnabled ? '🔦 خاموش' : '🔦 فلش';
+          showToast(torchEnabled ? 'فلش روشن شد 🔦' : 'فلش خاموش شد', 'success');
+        }
+      }
+    } catch (err) {
+      console.error('Torch error:', err);
+      showToast('فلش پشتیبانی نمی‌شود', 'error');
     }
   }
 
@@ -1561,9 +1655,9 @@
       isAdminLoggedIn = true;
       adminIcon.classList.add('admin-logged');
       toggleAdminMenu();
-      showToast('ورود موفقیت‌آمیز!', 'success');
+      showToast('ورود موفقیت‌آمیز! 🎉', 'success');
     } else if (pass !== null) {
-      showToast('رمز عبور اشتباه است!', 'error');
+      showToast('رمز عبور اشتباه است! ❌', 'error');
     }
   };
 
@@ -1573,7 +1667,7 @@
     adminIcon.classList.remove('admin-logged');
     adminMenu.style.display = 'none';
     document.getElementById('dataTable').style.display = 'none';
-    showToast('خروج انجام شد', 'success');
+    showToast('خروج انجام شد 👋', 'success');
   }
 
   // نمایش پیام toast
@@ -1606,7 +1700,7 @@
     }
   }
 
-  // ثبت فروش جدید
+  // ✅ ثبت فروش جدید با تاریخ شمسی
   async function submitSale() {
     const storeName = document.getElementById('storeNameInput').value.trim();
     const imei = document.getElementById('imeiInput').value.trim();
@@ -1622,7 +1716,7 @@
 
     if (!storeName) {
       validateField(storeNameInput, false);
-      showToast('نام فروشگاه را وارد کنید.', 'error');
+      showToast('نام فروشگاه را وارد کنید. ⚠️', 'error');
       storeNameInput.focus();
       return;
     }
@@ -1630,7 +1724,7 @@
 
     if (!imei || imei.length !== 15) {
       validateField(imeiInput, false);
-      showToast('IMEI باید دقیقاً 15 رقم باشد.', 'error');
+      showToast('IMEI باید دقیقاً 15 رقم باشد. ⚠️', 'error');
       imeiInput.focus();
       return;
     }
@@ -1638,7 +1732,7 @@
 
     if (!model) {
       validateField(modelInput, false);
-      showToast('مدل گوشی را وارد کنید.', 'error');
+      showToast('مدل گوشی را وارد کنید. ⚠️', 'error');
       modelInput.focus();
       return;
     }
@@ -1646,13 +1740,13 @@
 
     if (!selectedDate) {
       validateField(dateInput, false);
-      showToast('تاریخ ثبت فروش را انتخاب کنید.', 'error');
+      showToast('تاریخ ثبت فروش را انتخاب کنید. 📅', 'error');
       dateInput.focus();
       return;
     }
     validateField(dateInput, true);
 
-    // تبدیل تاریخ شمسی به میلادی برای ارسال
+    // ✅ تبدیل تاریخ شمسی به میلادی برای ارسال
     const gregorianDate = jalaliToGregorian(selectedDate.year, selectedDate.month, selectedDate.day);
     const saleDate = `${gregorianDate.year}-${gregorianDate.month.toString().padStart(2, '0')}-${gregorianDate.day.toString().padStart(2, '0')}`;
 
@@ -1685,7 +1779,7 @@
       const data = await res.json();
       
       if (data.success) {
-        showToast(data.message || 'فروش با موفقیت ثبت شد!', 'success');
+        showToast('فروش با موفقیت ثبت شد! 🎉', 'success');
         // پاک کردن فرم
         document.getElementById('storeNameInput').value = '';
         document.getElementById('imeiInput').value = '';
@@ -1693,7 +1787,7 @@
         document.getElementById('cityInput').value = '';
         document.getElementById('phoneInput').value = '';
         
-        // تنظیم مجدد تاریخ امروز
+        // تنظیم مجدد تاریخ امروز شمسی
         const today = new Date();
         const todayJalali = gregorianToJalali(today.getFullYear(), today.getMonth() + 1, today.getDate());
         selectedDate = todayJalali;
@@ -1706,10 +1800,10 @@
           input.classList.remove('error', 'success');
         });
       } else {
-        showToast(data.message || 'خطا در ثبت فروش', 'error');
+        showToast(data.message || 'خطا در ثبت فروش ❌', 'error');
       }
     } catch(e) {
-      showToast('خطای شبکه: ' + e.message, 'error');
+      showToast('خطای شبکه: ' + e.message + ' 🌐', 'error');
     } finally {
       // مخفی کردن لودینگ
       submitBtn.disabled = false;
@@ -1718,10 +1812,10 @@
     }
   }
 
-  // بارگذاری اطلاعات فروش
+  // ✅ بارگذاری اطلاعات فروش با تاریخ شمسی و ردیف
   async function loadSalesData() {
     if (!isAdminLoggedIn) {
-      showToast('ابتدا به عنوان ادمین وارد شوید!', 'error');
+      showToast('ابتدا به عنوان ادمین وارد شوید! 🔐', 'error');
       return;
     }
     
@@ -1737,10 +1831,10 @@
       tbody.innerHTML = '';
       
       if(result.data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6">داده‌ای موجود نیست</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7">داده‌ای موجود نیست</td></tr>';
       } else {
-        result.data.forEach(row => {
-          // تبدیل تاریخ به شمسی
+        result.data.forEach((row, index) => {
+          // ✅ تبدیل تاریخ به شمسی برای نمایش
           let persianDate = '';
           if (row.sale_date || row.created_at) {
             const date = new Date(row.sale_date || row.created_at);
@@ -1749,28 +1843,29 @@
           }
           
           tbody.innerHTML += `<tr>
+            <td><strong>${index + 1}</strong></td>
             <td>${row.store_name || '-'}</td>
-            <td>${row.imei}</td>
+            <td style="font-family: monospace; font-size: 11px;">${row.imei}</td>
             <td>${row.phone_model}</td>
             <td>${row.city || '-'}</td>
             <td>${row.phone_number || '-'}</td>
-            <td>${persianDate}</td>
+            <td><strong style="color: #3995e7;">${persianDate}</strong></td>
           </tr>`;
         });
       }
       
       document.getElementById('dataTable').style.display = 'block';
       adminMenu.style.display = 'none';
-      showToast(`${result.data.length} رکورد بارگذاری شد`, 'success');
+      showToast(`${result.data.length} رکورد بارگذاری شد 📊`, 'success');
     } catch(e) {
-      showToast('خطا در بارگذاری داده‌ها: ' + e.message, 'error');
+      showToast('خطا در بارگذاری داده‌ها: ' + e.message + ' ❌', 'error');
     }
   }
 
   // دانلود CSV
   async function downloadData() {
     if(!isAdminLoggedIn){
-      showToast('ابتدا به عنوان ادمین وارد شوید!', 'error');
+      showToast('ابتدا به عنوان ادمین وارد شوید! 🔐', 'error');
       return;
     }
     
@@ -1785,21 +1880,23 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `honor_sales_${new Date().toISOString().split('T')[0]}.csv`;
+      const today = new Date();
+      const todayJalali = gregorianToJalali(today.getFullYear(), today.getMonth() + 1, today.getDate());
+      a.download = `honor_sales_${todayJalali.year}_${todayJalali.month}_${todayJalali.day}.csv`;
       a.click();
       URL.revokeObjectURL(url);
       
-      showToast('فایل با موفقیت دانلود شد', 'success');
+      showToast('فایل با موفقیت دانلود شد 📥', 'success');
       adminMenu.style.display = 'none';
     } catch(e){
-      showToast('خطا در دانلود: ' + e.message, 'error');
+      showToast('خطا در دانلود: ' + e.message + ' ❌', 'error');
     }
   }
 
   // نمایش/مخفی مودال حذف داده‌ها
   function showDeleteModal() {
     if(!isAdminLoggedIn){
-      showToast('ابتدا به عنوان ادمین وارد شوید!', 'error');
+      showToast('ابتدا به عنوان ادمین وارد شوید! 🔐', 'error');
       return;
     }
     document.getElementById('deleteModal').style.display = 'flex';
@@ -1820,11 +1917,11 @@
       
       if(!res.ok) throw new Error('خطا در حذف داده‌ها');
       
-      showToast('تمام داده‌ها حذف شدند', 'success');
+      showToast('تمام داده‌ها حذف شدند 🗑️', 'success');
       hideDeleteModal();
       document.getElementById('dataTable').style.display = 'none';
     } catch(e) {
-      showToast('خطا در حذف: ' + e.message, 'error');
+      showToast('خطا در حذف: ' + e.message + ' ❌', 'error');
     }
   }
 
